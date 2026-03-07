@@ -452,7 +452,7 @@
                           f('auth.effects.ts', 'ts', 'Auth effects — handles login/logout side effects, token storage.')
                         ]
                       },
-                      { name: 'login', type: 'folder', desc: 'Login page.', children: [componentFolder('login', 'Login page component.')].map(c => c.children).flat() },
+                      { name: 'login', type: 'folder', desc: 'Login page.', children: componentFolder('login', 'Login page component.').children },
                       { name: 'register', type: 'folder', desc: 'Register page.', children: [] },
                       f('auth.routes.ts', 'routes', 'Auth lazy routes.')
                     ]
