@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Angular Best Practices — Interactive folder structure guide for scalable Angular applications.">
+  <meta name="keywords" content="Angular, best practices, folder structure, architecture, guide">
+  <meta name="author" content="Omaizer21">
+  <title>Angular Best Practices — Folder Structure Guide</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="#hero" class="nav__logo">
+        <span class="nav__logo-icon">📐</span>
+        <span class="nav__logo-text">Angular<span class="accent">BP</span></span>
+      </a>
+      <ul class="nav__links" id="navLinks">
+        <li><a href="#folder-tree" class="nav__link">Folder Tree</a></li>
+        <li><a href="#architecture" class="nav__link">Architecture</a></li>
+        <li><a href="#naming" class="nav__link">Naming</a></li>
+        <li><a href="#principles" class="nav__link">Principles</a></li>
+        <li><a href="#cheatsheet" class="nav__link">Cheat Sheet</a></li>
+      </ul>
+      <div class="nav__actions">
+        <div class="search-wrapper" id="searchWrapper">
+          <button class="btn-icon" id="searchToggle" aria-label="Search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+          <input type="text" class="search-input" id="searchInput" placeholder="Search files & folders…" autocomplete="off">
+        </div>
+        <button class="btn-icon theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="btn-icon hamburger" id="hamburger" aria-label="Menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+      <div class="hero__bg"></div>
+      <div class="container hero__content">
+        <div class="hero__badge">📂 Open Source Guide</div>
+        <h1 class="hero__title">Angular <span class="gradient-text">Best Practices</span></h1>
+        <p class="hero__subtitle">A comprehensive, interactive guide to structuring scalable Angular applications using the <strong>core / shared / features</strong> pattern.</p>
+        <div class="hero__actions">
+          <a href="#folder-tree" class="btn btn--primary">Explore Structure</a>
+          <a href="#architecture" class="btn btn--outline">Learn More</a>
+        </div>
+        <div class="hero__stats">
+          <div class="hero__stat"><span class="hero__stat-num">100+</span><span class="hero__stat-label">Files</span></div>
+          <div class="hero__stat"><span class="hero__stat-num">5</span><span class="hero__stat-label">Layers</span></div>
+          <div class="hero__stat"><span class="hero__stat-num">3</span><span class="hero__stat-label">Feature Modules</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Folder Tree Section -->
+    <section class="section" id="folder-tree">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">Interactive Folder Tree</h2>
+          <p class="section__subtitle">Click folders to expand/collapse. Click any item to see its explanation.</p>
+        </div>
+        <div class="tree-controls">
+          <button class="btn btn--small" id="expandAll">Expand All</button>
+          <button class="btn btn--small" id="collapseAll">Collapse All</button>
+          <button class="btn btn--small btn--accent" id="copyTree">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy Structure
+          </button>
+        </div>
+        <div class="tree-layout">
+          <div class="tree-panel">
+            <div class="tree-container" id="treeContainer">
+              <!-- Tree rendered by JS -->
+            </div>
+          </div>
+          <div class="detail-panel glass-card" id="detailPanel">
+            <div class="detail-placeholder" id="detailPlaceholder">
+              <div class="detail-placeholder__icon">👈</div>
+              <p>Click on any file or folder to see its description and purpose.</p>
+            </div>
+            <div class="detail-content" id="detailContent" style="display:none;">
+              <div class="detail-content__header">
+                <span class="detail-content__icon" id="detailIcon"></span>
+                <h3 class="detail-content__name" id="detailName"></h3>
+              </div>
+              <span class="detail-content__type-badge" id="detailBadge"></span>
+              <p class="detail-content__path" id="detailPath"></p>
+              <p class="detail-content__desc" id="detailDesc"></p>
+            </div>
+          </div>
+        </div>
+        <p class="search-status" id="searchStatus" style="display:none;"></p>
+      </div>
+    </section>
+
+    <!-- Architecture Overview Section -->
+    <section class="section section--alt" id="architecture">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">Architecture Overview</h2>
+          <p class="section__subtitle">Understanding the core / shared / features pattern for scalable Angular apps.</p>
+        </div>
+        <div class="arch-grid">
+          <div class="arch-card glass-card">
+            <div class="arch-card__icon">🧠</div>
+            <h3 class="arch-card__title">core/</h3>
+            <p class="arch-card__desc">Singleton services, guards, interceptors, and utilities used <strong>app-wide</strong>. Imported <em>only once</em> in the root module. Contains authentication logic, HTTP interceptors, global services, constants, enums, and models.</p>
+            <ul class="arch-card__list">
+              <li>Guards (auth, role, no-auth)</li>
+              <li>Interceptors (auth, error, loading, cache)</li>
+              <li>Singleton services</li>
+              <li>Global models, enums, constants</li>
+              <li>Utility functions</li>
+            </ul>
+          </div>
+          <div class="arch-card glass-card">
+            <div class="arch-card__icon">🔗</div>
+            <h3 class="arch-card__title">shared/</h3>
+            <p class="arch-card__desc">Reusable components, directives, and pipes <strong>shared across features</strong>. Imported by any feature module that needs them. Contains UI building blocks like buttons, modals, tables, and form validators.</p>
+            <ul class="arch-card__list">
+              <li>Reusable UI components</li>
+              <li>Custom directives</li>
+              <li>Custom pipes</li>
+              <li>Form validators</li>
+            </ul>
+          </div>
+          <div class="arch-card glass-card">
+            <div class="arch-card__icon">🧩</div>
+            <h3 class="arch-card__title">features/</h3>
+            <p class="arch-card__desc"><strong>Lazy-loaded feature modules</strong>, each representing a distinct business domain. Each feature has its own pages, components, services, models, and routes — fully self-contained.</p>
+            <ul class="arch-card__list">
+              <li>Auth (login, register, forgot-password)</li>
+              <li>Dashboard (stats, activity feed)</li>
+              <li>Users (list, detail)</li>
+              <li>Each feature has its own routes file</li>
+            </ul>
+          </div>
+          <div class="arch-card glass-card">
+            <div class="arch-card__icon">🖼️</div>
+            <h3 class="arch-card__title">layout/</h3>
+            <p class="arch-card__desc">Layout components that define the <strong>visual shell</strong> of the application — header, sidebar, footer, and the main layout wrapper that composes them together.</p>
+            <ul class="arch-card__list">
+              <li>Header with navigation</li>
+              <li>Sidebar navigation</li>
+              <li>Footer</li>
+              <li>Main layout composition</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Naming Conventions Section -->
+    <section class="section" id="naming">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">Naming Conventions</h2>
+          <p class="section__subtitle">Angular's consistent naming conventions for files, classes, and selectors.</p>
+        </div>
+        <div class="naming-grid">
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext">.component.ts</span>
+            <h4 class="naming-card__title">Components</h4>
+            <p class="naming-card__desc">UI building blocks. File: <code>hero.component.ts</code> → Class: <code>HeroComponent</code> → Selector: <code>app-hero</code></p>
+          </div>
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext ext-service">.service.ts</span>
+            <h4 class="naming-card__title">Services</h4>
+            <p class="naming-card__desc">Business logic &amp; data access. File: <code>auth.service.ts</code> → Class: <code>AuthService</code></p>
+          </div>
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext ext-guard">.guard.ts</span>
+            <h4 class="naming-card__title">Guards</h4>
+            <p class="naming-card__desc">Route protection. File: <code>auth.guard.ts</code> → Function: <code>authGuard</code></p>
+          </div>
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext ext-interceptor">.interceptor.ts</span>
+            <h4 class="naming-card__title">Interceptors</h4>
+            <p class="naming-card__desc">HTTP request/response middleware. File: <code>auth.interceptor.ts</code> → Function: <code>authInterceptor</code></p>
+          </div>
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext ext-pipe">.pipe.ts</span>
+            <h4 class="naming-card__title">Pipes</h4>
+            <p class="naming-card__desc">Template data transformation. File: <code>truncate.pipe.ts</code> → Class: <code>TruncatePipe</code></p>
+          </div>
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext ext-directive">.directive.ts</span>
+            <h4 class="naming-card__title">Directives</h4>
+            <p class="naming-card__desc">DOM behavior modifiers. File: <code>highlight.directive.ts</code> → Class: <code>HighlightDirective</code></p>
+          </div>
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext ext-model">.model.ts</span>
+            <h4 class="naming-card__title">Models</h4>
+            <p class="naming-card__desc">TypeScript interfaces/types. File: <code>user.model.ts</code> → Interface: <code>User</code></p>
+          </div>
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext ext-spec">.spec.ts</span>
+            <h4 class="naming-card__title">Tests</h4>
+            <p class="naming-card__desc">Unit tests. File: <code>hero.component.spec.ts</code> → Co-located with source file</p>
+          </div>
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext ext-routes">.routes.ts</span>
+            <h4 class="naming-card__title">Routes</h4>
+            <p class="naming-card__desc">Route definitions. File: <code>auth.routes.ts</code> → Export: <code>AUTH_ROUTES</code></p>
+          </div>
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext ext-enum">.enum.ts</span>
+            <h4 class="naming-card__title">Enums</h4>
+            <p class="naming-card__desc">Enumerated types. File: <code>role.enum.ts</code> → Enum: <code>Role</code></p>
+          </div>
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext ext-constant">.constant.ts</span>
+            <h4 class="naming-card__title">Constants</h4>
+            <p class="naming-card__desc">App-wide constants. File: <code>api-endpoints.constant.ts</code> → Export: <code>API_ENDPOINTS</code></p>
+          </div>
+          <div class="naming-card glass-card">
+            <span class="naming-card__ext ext-util">.util.ts</span>
+            <h4 class="naming-card__title">Utilities</h4>
+            <p class="naming-card__desc">Helper functions. File: <code>date.util.ts</code> → Pure functions</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Principles Section -->
+    <section class="section section--alt" id="principles">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">Key Principles</h2>
+          <p class="section__subtitle">The design principles behind a well-architected Angular application.</p>
+        </div>
+        <div class="principles-grid">
+          <div class="principle-card glass-card">
+            <div class="principle-card__letter">S</div>
+            <h4 class="principle-card__title">Single Responsibility</h4>
+            <p class="principle-card__desc">Each file, class, and module should have one reason to change. Components handle presentation; services handle data and logic.</p>
+          </div>
+          <div class="principle-card glass-card">
+            <div class="principle-card__letter">O</div>
+            <h4 class="principle-card__title">Open / Closed</h4>
+            <p class="principle-card__desc">Design modules and services to be extended without modifying existing code. Use interfaces and dependency injection.</p>
+          </div>
+          <div class="principle-card glass-card">
+            <div class="principle-card__letter">L</div>
+            <h4 class="principle-card__title">Liskov Substitution</h4>
+            <p class="principle-card__desc">Derived classes or implementations should be substitutable for their base types without breaking the app.</p>
+          </div>
+          <div class="principle-card glass-card">
+            <div class="principle-card__letter">I</div>
+            <h4 class="principle-card__title">Interface Segregation</h4>
+            <p class="principle-card__desc">Prefer many small, specific interfaces over one large interface. Keep service contracts lean and focused.</p>
+          </div>
+          <div class="principle-card glass-card">
+            <div class="principle-card__letter">D</div>
+            <h4 class="principle-card__title">Dependency Inversion</h4>
+            <p class="principle-card__desc">Depend on abstractions, not concretions. Angular's DI system naturally encourages this via injection tokens and interfaces.</p>
+          </div>
+        </div>
+        <div class="extra-principles">
+          <div class="extra-card glass-card">
+            <h4>🔄 DRY — Don't Repeat Yourself</h4>
+            <p>Extract shared logic into services, pipes, directives, and utility functions. The <code>shared/</code> folder is your best friend.</p>
+          </div>
+          <div class="extra-card glass-card">
+            <h4>📦 Lazy Loading</h4>
+            <p>Each feature module should be lazy-loaded via <code>loadChildren</code> or <code>loadComponent</code> in routes to keep the initial bundle small.</p>
+          </div>
+          <div class="extra-card glass-card">
+            <h4>🗂️ Feature Encapsulation</h4>
+            <p>Features own their pages, components, services, and models. Only the routes file is exposed to the rest of the app.</p>
+          </div>
+          <div class="extra-card glass-card">
+            <h4>🧪 Co-located Tests</h4>
+            <p>Spec files live next to the code they test (<code>*.spec.ts</code>). This makes it easy to find and maintain tests.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cheat Sheet Section -->
+    <section class="section" id="cheatsheet">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">Quick Reference Cheat Sheet</h2>
+          <p class="section__subtitle">Essential Angular CLI commands and quick tips.</p>
+        </div>
+        <div class="cheat-grid">
+          <div class="cheat-card glass-card">
+            <h4 class="cheat-card__title">🚀 Generate Components</h4>
+            <pre class="cheat-card__code"><code>ng g c features/auth/pages/login
+ng g c shared/components/button
+ng g c layout/header</code></pre>
+          </div>
+          <div class="cheat-card glass-card">
+            <h4 class="cheat-card__title">⚙️ Generate Services</h4>
+            <pre class="cheat-card__code"><code>ng g s core/services/auth
+ng g s features/users/services/users-api</code></pre>
+          </div>
+          <div class="cheat-card glass-card">
+            <h4 class="cheat-card__title">🛡️ Generate Guards</h4>
+            <pre class="cheat-card__code"><code>ng g guard core/guards/auth
+ng g guard core/guards/role</code></pre>
+          </div>
+          <div class="cheat-card glass-card">
+            <h4 class="cheat-card__title">🔌 Generate Interceptors</h4>
+            <pre class="cheat-card__code"><code>ng g interceptor core/interceptors/auth
+ng g interceptor core/interceptors/error</code></pre>
+          </div>
+          <div class="cheat-card glass-card">
+            <h4 class="cheat-card__title">🔧 Generate Pipes</h4>
+            <pre class="cheat-card__code"><code>ng g pipe shared/pipes/truncate
+ng g pipe shared/pipes/time-ago</code></pre>
+          </div>
+          <div class="cheat-card glass-card">
+            <h4 class="cheat-card__title">📌 Generate Directives</h4>
+            <pre class="cheat-card__code"><code>ng g directive shared/directives/highlight
+ng g directive shared/directives/tooltip</code></pre>
+          </div>
+          <div class="cheat-card glass-card">
+            <h4 class="cheat-card__title">📁 Recommended Structure</h4>
+            <pre class="cheat-card__code"><code>src/app/
+├── core/       ← singletons
+├── shared/     ← reusables
+├── features/   ← lazy modules
+└── layout/     ← shell UI</code></pre>
+          </div>
+          <div class="cheat-card glass-card">
+            <h4 class="cheat-card__title">💡 Tips</h4>
+            <ul class="cheat-card__list">
+              <li>Use standalone components (Angular 15+)</li>
+              <li>Barrel exports via <code>index.ts</code></li>
+              <li>Environment configs for API URLs</li>
+              <li>Prefix components: <code>app-</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <span class="nav__logo-icon">📐</span>
+        <span class="nav__logo-text">Angular<span class="accent">BP</span></span>
+      </div>
+      <p class="footer__text">Built with ❤️ for the Angular community. Vanilla HTML, CSS &amp; JS — no frameworks needed.</p>
+      <div class="footer__links">
+        <a href="https://angular.dev" target="_blank" rel="noopener noreferrer">Angular Docs</a>
+        <a href="https://github.com/Omaizer21" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+      <p class="footer__copy">&copy; 2024 Omaizer21. Open source under MIT License.</p>
+    </div>
+  </footer>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
