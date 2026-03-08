@@ -143,7 +143,7 @@
               f('app.routes.ts', 'routes', 'Root route definitions — lazy-loads feature modules, applies guards.'),
               {
                 name: 'core', type: 'folder',
-                desc: 'Core module — singleton services, functional guards, interceptors, models, enums, constants, utilities. Used app-wide.',
+                desc: 'Core module — singleton services, functional guards, interceptors, models, enums, constants, utilities. Used app-wide. Note: core/ is one of the few places where type-based sub-folders (guards/, interceptors/, services/) are still practical — these are app-wide singletons that don\'t belong to any feature.',
                 children: [
                   {
                     name: 'guards', type: 'folder',
@@ -208,41 +208,20 @@
               },
               {
                 name: 'shared', type: 'folder',
-                desc: 'Shared module — reusable standalone components, directives, pipes imported by any feature.',
+                desc: 'Reusable standalone pieces shared across features. Each shared component gets its own folder (ts + html + scss + spec); simple directives and pipes are flat files. Avoid type-based sub-folders — no components/, directives/, or pipes/ sub-directories.',
                 children: [
-                  {
-                    name: 'components', type: 'folder',
-                    desc: 'Reusable UI building blocks — buttons, modals, tables, spinners.',
-                    children: [
-                      componentFolder('button', 'Reusable button — variants (primary, secondary, danger), sizes, loading, disabled.'),
-                      componentFolder('modal', 'Reusable modal/dialog — customizable header, body, footer, backdrop close.'),
-                      componentFolder('loading-spinner', 'Loading indicator — inline or full-page overlay.'),
-                      componentFolder('data-table', 'Feature-rich table — sorting, filtering, pagination, row selection.')
-                    ]
-                  },
-                  {
-                    name: 'directives', type: 'folder', desc: 'Custom Angular directives.',
-                    children: [
-                      f('highlight.ts', 'directive', 'Highlight directive — background highlight on hover.'),
-                      f('tooltip.ts', 'directive', 'Tooltip directive — hover tooltip with configurable position.'),
-                      f('click-outside.ts', 'directive', 'Click-outside directive — emits event on outside click.')
-                    ]
-                  },
-                  {
-                    name: 'pipes', type: 'folder', desc: 'Custom Angular pipes for template transforms.',
-                    children: [
-                      f('truncate-pipe.ts', 'pipe', 'Truncate pipe — shortens text: {{ text | truncate:100 }}'),
-                      f('time-ago-pipe.ts', 'pipe', 'Time-ago pipe — relative time: "5 minutes ago".'),
-                      f('safe-html-pipe.ts', 'pipe', 'Safe HTML pipe — renders trusted HTML via DomSanitizer.')
-                    ]
-                  },
-                  {
-                    name: 'validators', type: 'folder', desc: 'Custom reactive form validators.',
-                    children: [
-                      f('email.validator.ts', 'validator', 'Email validator — stricter than built-in Validators.email.'),
-                      f('password-match.validator.ts', 'validator', 'Password match — cross-field validator for confirm password.')
-                    ]
-                  }
+                  componentFolder('button', 'Reusable button — variants (primary, secondary, danger), sizes, loading, disabled.'),
+                  componentFolder('modal', 'Reusable modal/dialog — customizable header, body, footer, backdrop close.'),
+                  componentFolder('loading-spinner', 'Loading indicator — inline or full-page overlay.'),
+                  componentFolder('data-table', 'Feature-rich table — sorting, filtering, pagination, row selection.'),
+                  f('highlight.ts', 'directive', 'Highlight directive — background highlight on hover.'),
+                  f('tooltip.ts', 'directive', 'Tooltip directive — hover tooltip with configurable position.'),
+                  f('click-outside.ts', 'directive', 'Click-outside directive — emits event on outside click.'),
+                  f('truncate-pipe.ts', 'pipe', 'Truncate pipe — shortens text: {{ text | truncate:100 }}'),
+                  f('time-ago-pipe.ts', 'pipe', 'Time-ago pipe — relative time: "5 minutes ago".'),
+                  f('safe-html-pipe.ts', 'pipe', 'Safe HTML pipe — renders trusted HTML via DomSanitizer.'),
+                  f('email.validator.ts', 'validator', 'Email validator — stricter than built-in Validators.email.'),
+                  f('password-match.validator.ts', 'validator', 'Password match — cross-field validator for confirm password.')
                 ]
               },
               {
@@ -251,60 +230,55 @@
                 children: [
                   {
                     name: 'auth', type: 'folder',
-                    desc: 'Auth feature — login, registration, password recovery. Lazy-loaded.',
+                    desc: 'Auth feature — login, registration, password recovery. All files flat alongside each other — no type-based sub-folders (no pages/, services/, models/). Lazy-loaded.',
                     children: [
-                      {
-                        name: 'pages', type: 'folder', desc: 'Auth routable page components.',
-                        children: [
-                          componentFolder('login', 'Login page — email/password form with validation, forgot password link.'),
-                          componentFolder('register', 'Register page — name, email, password, confirm password with validation.'),
-                          componentFolder('forgot-password', 'Forgot password — sends reset link, shows feedback.')
-                        ]
-                      },
-                      { name: 'services', type: 'folder', desc: 'Auth-scoped API services.',
-                        children: [f('auth-api.ts', 'service', 'Auth API — login, register, forgot password, token refresh.')]
-                      },
-                      { name: 'models', type: 'folder', desc: 'Auth TypeScript interfaces.',
-                        children: [f('auth.ts', 'model', 'LoginRequest, RegisterRequest, AuthResponse, TokenPayload.')]
-                      },
+                      f('login.ts', 'component', 'Login page — email/password form with validation, forgot password link.'),
+                      f('login.html', 'html', 'Login page template.'),
+                      f('login.scss', 'style', 'Login page styles.'),
+                      f('login.spec.ts', 'spec', 'Login page unit tests.'),
+                      f('register.ts', 'component', 'Register page — name, email, password, confirm password with validation.'),
+                      f('register.html', 'html', 'Register page template.'),
+                      f('register.scss', 'style', 'Register page styles.'),
+                      f('register.spec.ts', 'spec', 'Register page unit tests.'),
+                      f('forgot-password.ts', 'component', 'Forgot password — sends reset link, shows feedback.'),
+                      f('forgot-password.html', 'html', 'Forgot password template.'),
+                      f('forgot-password.scss', 'style', 'Forgot password styles.'),
+                      f('auth-api.ts', 'service', 'Auth API — login, register, forgot password, token refresh.'),
+                      f('auth.ts', 'model', 'LoginRequest, RegisterRequest, AuthResponse, TokenPayload.'),
                       f('auth.routes.ts', 'routes', 'Auth routes — /auth/login, /auth/register, /auth/forgot-password.')
                     ]
                   },
                   {
                     name: 'dashboard', type: 'folder',
-                    desc: 'Dashboard feature — stats, charts, activity feed. Lazy-loaded.',
+                    desc: 'Dashboard feature — stats, charts, activity feed. All files flat — no type-based sub-folders (no pages/, components/). Lazy-loaded.',
                     children: [
-                      {
-                        name: 'pages', type: 'folder', desc: 'Dashboard page components.',
-                        children: [componentFolder('dashboard-home', 'Dashboard home — stats cards, charts, activity feed.')]
-                      },
-                      {
-                        name: 'components', type: 'folder', desc: 'Dashboard-specific child components.',
-                        children: [
-                          componentFolder('stats-card', 'Stats card — title, value, icon, trend indicator.'),
-                          componentFolder('activity-feed', 'Activity feed — timeline of recent events.')
-                        ]
-                      },
+                      f('dashboard-home.ts', 'component', 'Dashboard home — stats cards, charts, activity feed.'),
+                      f('dashboard-home.html', 'html', 'Dashboard home template.'),
+                      f('dashboard-home.scss', 'style', 'Dashboard home styles.'),
+                      f('dashboard-home.spec.ts', 'spec', 'Dashboard home unit tests.'),
+                      f('stats-card.ts', 'component', 'Stats card — title, value, icon, trend indicator.'),
+                      f('stats-card.html', 'html', 'Stats card template.'),
+                      f('stats-card.scss', 'style', 'Stats card styles.'),
+                      f('activity-feed.ts', 'component', 'Activity feed — timeline of recent events.'),
+                      f('activity-feed.html', 'html', 'Activity feed template.'),
+                      f('activity-feed.scss', 'style', 'Activity feed styles.'),
                       f('dashboard.routes.ts', 'routes', 'Dashboard routes — loads dashboard-home page.')
                     ]
                   },
                   {
                     name: 'users', type: 'folder',
-                    desc: 'Users feature — list, detail, create, edit. Lazy-loaded.',
+                    desc: 'Users feature — list, detail, create, edit. All files flat — no type-based sub-folders (no pages/, services/, models/). Lazy-loaded.',
                     children: [
-                      {
-                        name: 'pages', type: 'folder', desc: 'User page components.',
-                        children: [
-                          componentFolder('user-list', 'User list — searchable, sortable, paginated table.'),
-                          componentFolder('user-detail', 'User detail — full profile with edit capability.')
-                        ]
-                      },
-                      { name: 'services', type: 'folder', desc: 'Users-scoped API services.',
-                        children: [f('users-api.ts', 'service', 'Users API — CRUD: getAll, getById, create, update, delete.')]
-                      },
-                      { name: 'models', type: 'folder', desc: 'User feature TypeScript interfaces.',
-                        children: [f('user-feature.ts', 'model', 'UserListItem, UserDetail, CreateUserRequest, UpdateUserRequest.')]
-                      },
+                      f('user-list.ts', 'component', 'User list — searchable, sortable, paginated table.'),
+                      f('user-list.html', 'html', 'User list template.'),
+                      f('user-list.scss', 'style', 'User list styles.'),
+                      f('user-list.spec.ts', 'spec', 'User list unit tests.'),
+                      f('user-detail.ts', 'component', 'User detail — full profile with edit capability.'),
+                      f('user-detail.html', 'html', 'User detail template.'),
+                      f('user-detail.scss', 'style', 'User detail styles.'),
+                      f('user-detail.spec.ts', 'spec', 'User detail unit tests.'),
+                      f('users-api.ts', 'service', 'Users API — CRUD: getAll, getById, create, update, delete.'),
+                      f('user-feature.ts', 'model', 'UserListItem, UserDetail, CreateUserRequest, UpdateUserRequest.'),
                       f('users.routes.ts', 'routes', 'Users routes — /users (list) and /users/:id (detail).')
                     ]
                   }
@@ -397,7 +371,7 @@
               f('app.config.ts', 'config', 'App config — provideStore, provideEffects, provideRouter.'),
               f('app.routes.ts', 'routes', 'Root lazy routes with guards.'),
               {
-                name: 'core', type: 'folder', desc: 'Singleton services, guards, interceptors.',
+                name: 'core', type: 'folder', desc: 'Singleton services, guards, interceptors. Note: core/ is one of the few places where type-based sub-folders (guards/, interceptors/, services/) are still practical — these are app-wide singletons that don\'t belong to any feature.',
                 children: [
                   { name: 'guards', type: 'folder', desc: 'Functional route guards.',
                     children: [
@@ -424,17 +398,13 @@
                 ]
               },
               {
-                name: 'shared', type: 'folder', desc: 'Shared standalone components, directives, pipes.',
+                name: 'shared', type: 'folder', desc: 'Reusable standalone pieces. Each shared component gets its own folder; simple directives and pipes are flat files. No type-based sub-folders (no components/, directives/, pipes/).',
                 children: [
-                  { name: 'components', type: 'folder', desc: 'Reusable UI components.',
-                    children: [
-                      componentFolder('button', 'Reusable button component.'),
-                      componentFolder('modal', 'Reusable modal component.')
-                    ]
-                  },
-                  { name: 'directives', type: 'folder', desc: 'Custom directives.', children: [f('highlight.ts', 'directive', 'Highlight on hover.')] },
-                  { name: 'pipes', type: 'folder', desc: 'Custom pipes.', children: [f('truncate-pipe.ts', 'pipe', 'Truncate text.')] },
-                  { name: 'validators', type: 'folder', desc: 'Form validators.', children: [f('password-match.validator.ts', 'validator', 'Password match.')] }
+                  componentFolder('button', 'Reusable button component.'),
+                  componentFolder('modal', 'Reusable modal component.'),
+                  f('highlight.ts', 'directive', 'Highlight on hover.'),
+                  f('truncate-pipe.ts', 'pipe', 'Truncate text.'),
+                  f('password-match.validator.ts', 'validator', 'Password match.')
                 ]
               },
               {
@@ -632,12 +602,8 @@
                   {
                     name: 'lib', type: 'folder', desc: 'Auth lib modules.',
                     children: [
-                      { name: 'services', type: 'folder', desc: 'Auth services.',
-                        children: [f('auth.ts', 'service', 'Shared auth service used by all apps.')]
-                      },
-                      { name: 'guards', type: 'folder', desc: 'Auth guards.',
-                        children: [f('auth.ts', 'guard', 'Functional auth guard exported from lib.')]
-                      },
+                      f('auth.ts', 'service', 'Shared auth service used by all apps.'),
+                      f('auth-guard.ts', 'guard', 'Functional auth guard exported from lib.'),
                       {
                         name: 'store', type: 'folder', desc: 'NgRx auth store.',
                         children: [
