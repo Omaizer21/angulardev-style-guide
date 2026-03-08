@@ -1,386 +1,349 @@
 /* ==========================================================================
    Angular Best Practices — script.js
    Handles: tree rendering, expand/collapse, detail panel, search, theme,
-            copy-to-clipboard, sticky header, mobile nav, smooth scroll.
+            copy-to-clipboard, sticky header, mobile nav, smooth scroll,
+            particles, scroll progress, back-to-top, scroll animations,
+            project size toggle, tooltips, keyboard shortcuts.
    ========================================================================== */
 
 (function () {
   'use strict';
 
   // ========================================================================
-  // Folder structure data
+  // Helper constructors
   // ========================================================================
-  const TREE_DATA = {
-    name: 'my-angular-app',
-    type: 'folder',
+  function f(name, type, desc) {
+    return { name: name, type: type, desc: desc };
+  }
+
+  function componentFolder(name, desc) {
+    return {
+      name: name, type: 'folder', desc: desc,
+      children: [
+        f(name + '.component.ts', 'component', desc),
+        f(name + '.component.html', 'html', 'Template for the ' + name + ' component.'),
+        f(name + '.component.scss', 'style', 'Scoped SCSS styles for the ' + name + ' component.'),
+        f(name + '.component.spec.ts', 'spec', 'Unit tests for the ' + name + ' component.')
+      ]
+    };
+  }
+
+  // ========================================================================
+  // SMALL TREE (~20 files)
+  // ========================================================================
+  var SMALL_TREE = {
+    name: 'my-small-app', type: 'folder',
+    desc: 'Root of a minimal Angular standalone app — ideal for prototypes and small single-developer projects.',
+    children: [
+      f('angular.json', 'config', 'Angular workspace configuration — build targets and project settings.'),
+      f('package.json', 'json', 'Node.js manifest — dependencies and scripts.'),
+      f('tsconfig.json', 'config', 'Root TypeScript configuration — compiler options.'),
+      f('README.md', 'misc', 'Project documentation.'),
+      { name: 'src', type: 'folder',
+        desc: 'All application source code.',
+        children: [
+          f('main.ts', 'ts', 'Entry point — bootstrapApplication() with AppComponent and appConfig.'),
+          f('index.html', 'html', 'Root HTML — contains <app-root> element.'),
+          f('styles.scss', 'style', 'Global stylesheet.'),
+          { name: 'app', type: 'folder',
+            desc: 'Application root — root component, config, routes, and feature pages.',
+            children: [
+              f('app.component.ts', 'component', 'Root standalone component — contains RouterOutlet.'),
+              f('app.component.html', 'html', 'Root template — <router-outlet />.'),
+              f('app.component.scss', 'style', 'Root component styles.'),
+              f('app.config.ts', 'config', 'Application config — provideRouter, provideHttpClient.'),
+              f('app.routes.ts', 'routes', 'Root route definitions.'),
+              { name: 'home', type: 'folder', desc: 'Home page feature.',
+                children: [
+                  f('home.component.ts', 'component', 'Home page standalone component.'),
+                  f('home.component.html', 'html', 'Home page template.'),
+                  f('home.component.scss', 'style', 'Home page styles.')
+                ]
+              },
+              { name: 'about', type: 'folder', desc: 'About page feature.',
+                children: [
+                  f('about.component.ts', 'component', 'About page standalone component.'),
+                  f('about.component.html', 'html', 'About page template.'),
+                  f('about.component.scss', 'style', 'About page styles.')
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  // ========================================================================
+  // MEDIUM TREE (~100+ files) — core/shared/features/layout pattern
+  // ========================================================================
+  var MEDIUM_TREE = {
+    name: 'my-angular-app', type: 'folder',
     desc: 'Root directory of the Angular application. Contains configuration files and the src/ directory with all source code.',
     children: [
       f('angular.json', 'config', 'Angular workspace configuration — defines build targets, architect configs, and project settings.'),
       f('package.json', 'json', 'Node.js manifest — lists dependencies, scripts (build, serve, test, lint), and project metadata.'),
       f('tsconfig.json', 'config', 'Root TypeScript configuration — sets compiler options inherited by tsconfig.app.json and tsconfig.spec.json.'),
-      f('tsconfig.app.json', 'config', 'TypeScript config for the application build — extends the root tsconfig with app-specific settings.'),
-      f('tsconfig.spec.json', 'config', 'TypeScript config for unit tests — extends the root tsconfig with test-specific settings.'),
-      f('.editorconfig', 'misc', 'EditorConfig — enforces consistent coding styles (indent size, charset, end-of-line) across editors and IDEs.'),
-      f('.gitignore', 'misc', 'Git ignore rules — specifies files and directories that Git should not track (node_modules, dist, etc.).'),
-      f('.prettierrc', 'misc', 'Prettier configuration — defines code formatting rules (single quotes, trailing commas, print width).'),
-      f('.eslintrc.json', 'json', 'ESLint configuration — linting rules for TypeScript and Angular-specific patterns.'),
-      f('README.md', 'misc', 'Project documentation — setup instructions, architecture overview, and contribution guidelines.'),
+      f('tsconfig.app.json', 'config', 'TypeScript config for the application build.'),
+      f('tsconfig.spec.json', 'config', 'TypeScript config for unit tests.'),
+      f('.editorconfig', 'misc', 'EditorConfig — enforces consistent coding styles across editors.'),
+      f('.gitignore', 'misc', 'Git ignore rules — node_modules, dist, etc.'),
+      f('.eslintrc.json', 'json', 'ESLint configuration — linting rules for TypeScript and Angular patterns.'),
+      f('README.md', 'misc', 'Project documentation — setup instructions and architecture overview.'),
       {
-        name: 'src',
-        type: 'folder',
-        desc: 'Source directory — contains all application source code, assets, styles, and environments.',
+        name: 'src', type: 'folder',
+        desc: 'Source directory — all application source code, assets, styles, and environments.',
         children: [
-          f('main.ts', 'ts', 'Application entry point — bootstraps the Angular application using bootstrapApplication() with app config.'),
-          f('index.html', 'html', 'Main HTML file — the single page that Angular renders into. Contains the <app-root> element.'),
+          f('main.ts', 'ts', 'Application entry point — bootstraps the Angular app using bootstrapApplication() with app config.'),
+          f('index.html', 'html', 'Main HTML file — the single page Angular renders into, contains <app-root>.'),
           {
-            name: 'styles',
-            type: 'folder',
-            desc: 'Global stylesheets — SCSS partials for variables, mixins, resets, and typography imported into styles.scss.',
+            name: 'styles', type: 'folder',
+            desc: 'Global stylesheets — SCSS partials imported into styles.scss.',
             children: [
-              f('styles.scss', 'style', 'Main stylesheet — imports all SCSS partials and defines global styles applied across the entire application.'),
-              f('_variables.scss', 'style', 'SCSS variables — colors, spacing, breakpoints, font sizes, and other design tokens.'),
-              f('_mixins.scss', 'style', 'SCSS mixins — reusable style patterns like responsive breakpoints, flexbox helpers, and animations.'),
-              f('_reset.scss', 'style', 'CSS reset — normalizes browser default styles for consistent cross-browser rendering.'),
-              f('_typography.scss', 'style', 'Typography styles — font imports, heading sizes, line heights, and text utility classes.')
+              f('styles.scss', 'style', 'Main stylesheet — imports all SCSS partials.'),
+              f('_variables.scss', 'style', 'SCSS variables — colors, spacing, breakpoints, design tokens.'),
+              f('_mixins.scss', 'style', 'SCSS mixins — responsive breakpoints, flexbox helpers, animations.'),
+              f('_reset.scss', 'style', 'CSS reset — normalizes browser default styles.'),
+              f('_typography.scss', 'style', 'Typography styles — font imports, heading sizes, text utilities.')
             ]
           },
           {
-            name: 'assets',
-            type: 'folder',
-            desc: 'Static assets — images, icons, fonts, and i18n translation files served directly by the web server.',
+            name: 'assets', type: 'folder',
+            desc: 'Static assets — images, icons, fonts, and i18n translation files.',
             children: [
-              { name: 'images', type: 'folder', desc: 'Image assets — logos, backgrounds, illustrations, and other image files used in the application.', children: [] },
-              { name: 'icons', type: 'folder', desc: 'Icon assets — SVG icons or icon font files used throughout the UI.', children: [] },
-              { name: 'fonts', type: 'folder', desc: 'Font files — custom web fonts (woff2, woff) for consistent typography.', children: [] },
+              { name: 'images', type: 'folder', desc: 'Image assets.', children: [] },
+              { name: 'icons', type: 'folder', desc: 'SVG icon assets.', children: [] },
               {
-                name: 'i18n',
-                type: 'folder',
-                desc: 'Internationalization files — JSON translation files for multi-language support.',
+                name: 'i18n', type: 'folder', desc: 'Internationalization translation files.',
                 children: [
-                  f('en.json', 'json', 'English translations — key-value pairs for all user-facing text in English.'),
-                  f('ar.json', 'json', 'Arabic translations — key-value pairs for all user-facing text in Arabic (RTL support).')
+                  f('en.json', 'json', 'English translations.'),
+                  f('ar.json', 'json', 'Arabic translations (RTL support).')
                 ]
               }
             ]
           },
           {
-            name: 'environments',
-            type: 'folder',
-            desc: 'Environment configurations — TypeScript files exporting environment-specific variables (API URLs, feature flags).',
+            name: 'environments', type: 'folder',
+            desc: 'Environment configurations — TypeScript files with environment-specific variables.',
             children: [
-              f('environment.ts', 'env', 'Base environment — default environment variables. Used as a type reference and fallback.'),
-              f('environment.development.ts', 'env', 'Development environment — local API URLs, debug flags, and development-only settings.'),
-              f('environment.production.ts', 'env', 'Production environment — production API URLs, disabled debug flags, and optimization settings.')
+              f('environment.ts', 'env', 'Base environment variables.'),
+              f('environment.development.ts', 'env', 'Development environment — local API URLs, debug flags.'),
+              f('environment.production.ts', 'env', 'Production environment — production API URLs, optimizations.')
             ]
           },
           {
-            name: 'app',
-            type: 'folder',
-            desc: 'Main application directory — contains the root component, app config, routes, and all feature/module directories.',
+            name: 'app', type: 'folder',
+            desc: 'Main application directory — root component, config, routes, and all feature directories.',
             children: [
-              f('app.component.ts', 'component', 'Root component class — the top-level component that bootstraps the app. Contains the router outlet.'),
-              f('app.component.html', 'html', 'Root component template — typically just contains <router-outlet> to render routed views.'),
-              f('app.component.scss', 'style', 'Root component styles — global component-scoped styles for the app shell.'),
-              f('app.component.spec.ts', 'spec', 'Root component tests — unit tests verifying the app component renders and bootstraps correctly.'),
-              f('app.config.ts', 'config', 'Application configuration — provides app-wide providers (router, HTTP client, interceptors) via provideAppConfig().'),
-              f('app.routes.ts', 'routes', 'Root route definitions — top-level routes that lazy-load feature modules and apply guards.'),
+              f('app.component.ts', 'component', 'Root standalone component — bootstraps the app, contains RouterOutlet.'),
+              f('app.component.html', 'html', 'Root template — <router-outlet /> to render routed views.'),
+              f('app.component.scss', 'style', 'Root component styles — global app shell styles.'),
+              f('app.component.spec.ts', 'spec', 'Root component unit tests.'),
+              f('app.config.ts', 'config', 'Application configuration — provideRouter, provideHttpClient, interceptors.'),
+              f('app.routes.ts', 'routes', 'Root route definitions — lazy-loads feature modules, applies guards.'),
               {
-                name: 'core',
-                type: 'folder',
-                desc: 'Core module — singleton services, guards, interceptors, models, enums, constants, and utilities used app-wide. Imported only once in the root.',
+                name: 'core', type: 'folder',
+                desc: 'Core module — singleton services, functional guards, interceptors, models, enums, constants, utilities. Used app-wide.',
                 children: [
                   {
-                    name: 'guards',
-                    type: 'folder',
-                    desc: 'Route guards — functions that control access to routes based on authentication, roles, or other conditions.',
+                    name: 'guards', type: 'folder',
+                    desc: 'Functional route guards — control route access based on auth state.',
                     children: [
-                      f('auth.guard.ts', 'guard', 'Authentication guard — prevents unauthenticated users from accessing protected routes. Redirects to login.'),
-                      f('role.guard.ts', 'guard', 'Role-based guard — restricts route access based on user roles (admin, editor, viewer). Returns 403 if unauthorized.'),
-                      f('no-auth.guard.ts', 'guard', 'No-auth guard — prevents already-authenticated users from accessing login/register pages. Redirects to dashboard.')
+                      f('auth.guard.ts', 'guard', 'Functional auth guard — prevents unauthenticated users from protected routes.'),
+                      f('role.guard.ts', 'guard', 'Functional role guard — restricts access based on user roles.'),
+                      f('no-auth.guard.ts', 'guard', 'No-auth guard — redirects authenticated users away from login page.')
                     ]
                   },
                   {
-                    name: 'interceptors',
-                    type: 'folder',
-                    desc: 'HTTP interceptors — middleware that intercepts outgoing requests and incoming responses to add headers, handle errors, etc.',
+                    name: 'interceptors', type: 'folder',
+                    desc: 'Functional HTTP interceptors — middleware for requests/responses.',
                     children: [
-                      f('auth.interceptor.ts', 'interceptor', 'Auth interceptor — attaches the JWT/Bearer token to outgoing HTTP request headers for API authentication.'),
-                      f('error.interceptor.ts', 'interceptor', 'Error interceptor — catches HTTP errors globally, shows notifications, handles 401 (redirect to login) and 500 errors.'),
-                      f('loading.interceptor.ts', 'interceptor', 'Loading interceptor — sets a global loading state to true/false around HTTP requests to show/hide loading spinners.'),
-                      f('cache.interceptor.ts', 'interceptor', 'Cache interceptor — caches GET responses to reduce redundant API calls. Implements cache invalidation strategies.')
+                      f('auth.interceptor.ts', 'interceptor', 'Auth interceptor — attaches JWT Bearer token to outgoing HTTP requests.'),
+                      f('error.interceptor.ts', 'interceptor', 'Error interceptor — handles 401/500 errors globally, shows notifications.'),
+                      f('loading.interceptor.ts', 'interceptor', 'Loading interceptor — tracks HTTP request state for loading spinners.'),
+                      f('cache.interceptor.ts', 'interceptor', 'Cache interceptor — caches GET responses to reduce redundant API calls.')
                     ]
                   },
                   {
-                    name: 'services',
-                    type: 'folder',
-                    desc: 'Singleton services — app-wide services provided in root. Handle authentication, storage, logging, and notifications.',
+                    name: 'services', type: 'folder',
+                    desc: 'Singleton services — app-wide services using inject() for DI.',
                     children: [
-                      f('auth.service.ts', 'service', 'Auth service — manages login, logout, token storage, and current user state. Provides auth status observables.'),
-                      f('storage.service.ts', 'service', 'Storage service — abstracts localStorage/sessionStorage access with type-safe get/set/remove methods.'),
-                      f('logger.service.ts', 'service', 'Logger service — centralized logging with log levels (debug, info, warn, error). Can integrate with external services.'),
-                      f('notification.service.ts', 'service', 'Notification service — provides toast/snackbar notifications. Supports success, error, warning, and info messages.'),
-                      f('theme.service.ts', 'service', 'Theme service — manages dark/light theme state, persists preference, and applies theme class to document.')
+                      f('auth.service.ts', 'service', 'Auth service — manages login, logout, token, and user state via signals.'),
+                      f('storage.service.ts', 'service', 'Storage service — type-safe localStorage/sessionStorage abstraction.'),
+                      f('logger.service.ts', 'service', 'Logger service — centralized logging with configurable log levels.'),
+                      f('notification.service.ts', 'service', 'Notification service — toast/snackbar notifications with signal state.')
                     ]
                   },
                   {
-                    name: 'models',
-                    type: 'folder',
-                    desc: 'Global models — TypeScript interfaces and types used across the entire application for type safety.',
+                    name: 'models', type: 'folder', desc: 'Global TypeScript interfaces and types.',
                     children: [
-                      f('user.model.ts', 'model', 'User model — defines the User interface with properties like id, name, email, role, avatar, and timestamps.'),
-                      f('api-response.model.ts', 'model', 'API response model — generic wrapper interface for API responses with data, message, status, and error fields.'),
-                      f('pagination.model.ts', 'model', 'Pagination model — interface for paginated responses with page, pageSize, total, totalPages, and items.')
+                      f('user.model.ts', 'model', 'User interface — id, name, email, role, avatar, timestamps.'),
+                      f('api-response.model.ts', 'model', 'Generic API response wrapper — data, message, status, error.'),
+                      f('pagination.model.ts', 'model', 'Pagination interface — page, pageSize, total, items.')
                     ]
                   },
                   {
-                    name: 'enums',
-                    type: 'folder',
-                    desc: 'Enumerations — TypeScript enums for type-safe constants used across the app.',
+                    name: 'enums', type: 'folder', desc: 'TypeScript enums for type-safe constants.',
                     children: [
-                      f('role.enum.ts', 'enum', 'Role enum — defines user roles: Admin, Editor, Viewer. Used by guards and permission checks.'),
-                      f('status.enum.ts', 'enum', 'Status enum — defines entity statuses: Active, Inactive, Pending, Deleted. Used in user/content management.')
+                      f('role.enum.ts', 'enum', 'Role enum — Admin, Editor, Viewer.'),
+                      f('status.enum.ts', 'enum', 'Status enum — Active, Inactive, Pending, Deleted.')
                     ]
                   },
                   {
-                    name: 'constants',
-                    type: 'folder',
-                    desc: 'Application constants — readonly values like API endpoints, configuration keys, and magic strings.',
+                    name: 'constants', type: 'folder', desc: 'Application-wide readonly constants.',
                     children: [
-                      f('api-endpoints.constant.ts', 'constant', 'API endpoints — centralized object mapping all API endpoint paths. Avoids hardcoding URLs throughout the app.'),
-                      f('app.constant.ts', 'constant', 'App constants — application-wide constants like app name, version, default page size, and storage keys.')
+                      f('api-endpoints.constant.ts', 'constant', 'API endpoints — centralized URL mapping.'),
+                      f('app.constant.ts', 'constant', 'App constants — name, version, default page size, storage keys.')
                     ]
                   },
                   {
-                    name: 'utils',
-                    type: 'folder',
-                    desc: 'Utility functions — pure helper functions for dates, strings, and validation logic. No Angular dependencies.',
+                    name: 'utils', type: 'folder', desc: 'Pure utility functions — no Angular dependencies.',
                     children: [
-                      f('date.util.ts', 'util', 'Date utilities — helper functions for formatting, parsing, comparing dates, and calculating relative time.'),
-                      f('string.util.ts', 'util', 'String utilities — helpers for slugifying, capitalizing, truncating, and sanitizing strings.'),
-                      f('validators.util.ts', 'util', 'Validator utilities — custom validation functions for emails, passwords, phone numbers, and other common patterns.')
+                      f('date.util.ts', 'util', 'Date utilities — format, parse, compare, relative time.'),
+                      f('string.util.ts', 'util', 'String utilities — slugify, capitalize, truncate, sanitize.'),
+                      f('validators.util.ts', 'util', 'Custom validator functions — email, password, phone patterns.')
                     ]
                   }
                 ]
               },
               {
-                name: 'shared',
-                type: 'folder',
-                desc: 'Shared module — reusable components, directives, pipes, and validators imported by any feature module that needs them.',
+                name: 'shared', type: 'folder',
+                desc: 'Shared module — reusable standalone components, directives, pipes imported by any feature.',
                 children: [
                   {
-                    name: 'components',
-                    type: 'folder',
-                    desc: 'Shared components — reusable UI building blocks (buttons, modals, tables, spinners) used across multiple features.',
+                    name: 'components', type: 'folder',
+                    desc: 'Reusable UI building blocks — buttons, modals, tables, spinners.',
                     children: [
-                      componentFolder('button', 'Button component — a reusable, customizable button with variants (primary, secondary, danger), sizes, loading state, and disabled state.'),
-                      componentFolder('modal', 'Modal component — a reusable dialog/overlay with customizable header, body, footer. Supports close on backdrop click and escape key.'),
-                      componentFolder('loading-spinner', 'Loading spinner component — a visual loading indicator. Can be used inline or as a full-page overlay during async operations.'),
-                      componentFolder('confirm-dialog', 'Confirm dialog component — a modal that asks users to confirm or cancel destructive actions. Customizable title, message, and buttons.'),
-                      componentFolder('data-table', 'Data table component — a feature-rich table with sorting, filtering, pagination, and row selection. Accepts generic data inputs.'),
-                      componentFolder('pagination', 'Pagination component — a reusable page navigator with page numbers, next/prev, and configurable page size.')
+                      componentFolder('button', 'Reusable button — variants (primary, secondary, danger), sizes, loading, disabled.'),
+                      componentFolder('modal', 'Reusable modal/dialog — customizable header, body, footer, backdrop close.'),
+                      componentFolder('loading-spinner', 'Loading indicator — inline or full-page overlay.'),
+                      componentFolder('data-table', 'Feature-rich table — sorting, filtering, pagination, row selection.')
                     ]
                   },
                   {
-                    name: 'directives',
-                    type: 'folder',
-                    desc: 'Shared directives — custom attribute/structural directives that modify DOM behavior, reusable across features.',
+                    name: 'directives', type: 'folder', desc: 'Custom Angular directives.',
                     children: [
-                      f('highlight.directive.ts', 'directive', 'Highlight directive — highlights an element\'s background on hover. Configurable highlight color via input binding.'),
-                      f('tooltip.directive.ts', 'directive', 'Tooltip directive — shows a tooltip on hover with customizable position (top, bottom, left, right) and content.'),
-                      f('click-outside.directive.ts', 'directive', 'Click-outside directive — emits an event when a click occurs outside the host element. Useful for closing dropdowns/modals.'),
-                      f('lazy-load.directive.ts', 'directive', 'Lazy-load directive — defers loading of images or content until they enter the viewport using IntersectionObserver.')
+                      f('highlight.directive.ts', 'directive', 'Highlight directive — background highlight on hover.'),
+                      f('tooltip.directive.ts', 'directive', 'Tooltip directive — hover tooltip with configurable position.'),
+                      f('click-outside.directive.ts', 'directive', 'Click-outside directive — emits event on outside click.')
                     ]
                   },
                   {
-                    name: 'pipes',
-                    type: 'folder',
-                    desc: 'Shared pipes — custom pipes for transforming data in templates, reusable across features.',
+                    name: 'pipes', type: 'folder', desc: 'Custom Angular pipes for template transforms.',
                     children: [
-                      f('truncate.pipe.ts', 'pipe', 'Truncate pipe — shortens long text to a specified length and appends "…". Usage: {{ text | truncate:100 }}'),
-                      f('safe-html.pipe.ts', 'pipe', 'Safe HTML pipe — bypasses Angular\'s sanitizer to render trusted HTML. Use carefully to avoid XSS. Usage: [innerHTML]="html | safeHtml"'),
-                      f('time-ago.pipe.ts', 'pipe', 'Time-ago pipe — converts a date to a relative time string like "5 minutes ago" or "2 days ago". Auto-updates.'),
-                      f('filter.pipe.ts', 'pipe', 'Filter pipe — filters an array by a search term. Usage: *ngFor="let item of items | filter:searchTerm:\'name\'"')
+                      f('truncate.pipe.ts', 'pipe', 'Truncate pipe — shortens text: {{ text | truncate:100 }}'),
+                      f('time-ago.pipe.ts', 'pipe', 'Time-ago pipe — relative time: "5 minutes ago".'),
+                      f('safe-html.pipe.ts', 'pipe', 'Safe HTML pipe — renders trusted HTML via DomSanitizer.')
                     ]
                   },
                   {
-                    name: 'validators',
-                    type: 'folder',
-                    desc: 'Form validators — custom reactive form validators for common validation patterns.',
+                    name: 'validators', type: 'folder', desc: 'Custom reactive form validators.',
                     children: [
-                      f('email.validator.ts', 'validator', 'Email validator — a custom validator that checks for a valid email format beyond Angular\'s built-in Validators.email.'),
-                      f('password-match.validator.ts', 'validator', 'Password match validator — a cross-field validator that ensures "password" and "confirmPassword" fields match.')
+                      f('email.validator.ts', 'validator', 'Email validator — stricter than built-in Validators.email.'),
+                      f('password-match.validator.ts', 'validator', 'Password match — cross-field validator for confirm password.')
                     ]
                   }
                 ]
               },
               {
-                name: 'features',
-                type: 'folder',
-                desc: 'Feature modules — lazy-loaded, self-contained business domains. Each feature has its own pages, components, services, models, and routes.',
+                name: 'features', type: 'folder',
+                desc: 'Feature modules — lazy-loaded, self-contained business domains.',
                 children: [
                   {
-                    name: 'auth',
-                    type: 'folder',
-                    desc: 'Auth feature — handles user authentication: login, registration, and password recovery. Lazy-loaded via auth.routes.ts.',
+                    name: 'auth', type: 'folder',
+                    desc: 'Auth feature — login, registration, password recovery. Lazy-loaded.',
                     children: [
                       {
-                        name: 'pages',
-                        type: 'folder',
-                        desc: 'Auth pages — routable page components for the auth feature.',
+                        name: 'pages', type: 'folder', desc: 'Auth routable page components.',
                         children: [
-                          componentFolder('login', 'Login page — presents a login form with email/password fields, validation, and "forgot password" link. Calls AuthApiService.'),
-                          componentFolder('register', 'Register page — user registration form with fields for name, email, password, confirm password. Includes form validation.'),
-                          componentFolder('forgot-password', 'Forgot password page — allows users to request a password reset link via email. Shows success/error feedback.')
+                          componentFolder('login', 'Login page — email/password form with validation, forgot password link.'),
+                          componentFolder('register', 'Register page — name, email, password, confirm password with validation.'),
+                          componentFolder('forgot-password', 'Forgot password — sends reset link, shows feedback.')
                         ]
                       },
-                      {
-                        name: 'services',
-                        type: 'folder',
-                        desc: 'Auth-specific services — API services scoped to the auth feature.',
-                        children: [
-                          f('auth-api.service.ts', 'service', 'Auth API service — handles HTTP calls for login, register, forgot password, and token refresh. Scoped to auth feature.')
-                        ]
+                      { name: 'services', type: 'folder', desc: 'Auth-scoped API services.',
+                        children: [f('auth-api.service.ts', 'service', 'Auth API — login, register, forgot password, token refresh.')]
                       },
-                      {
-                        name: 'models',
-                        type: 'folder',
-                        desc: 'Auth models — TypeScript interfaces specific to the auth feature.',
-                        children: [
-                          f('auth.model.ts', 'model', 'Auth model — defines LoginRequest, RegisterRequest, AuthResponse, and TokenPayload interfaces.')
-                        ]
+                      { name: 'models', type: 'folder', desc: 'Auth TypeScript interfaces.',
+                        children: [f('auth.model.ts', 'model', 'LoginRequest, RegisterRequest, AuthResponse, TokenPayload.')]
                       },
-                      f('auth.routes.ts', 'routes', 'Auth routes — defines child routes for the auth feature: /auth/login, /auth/register, /auth/forgot-password.')
+                      f('auth.routes.ts', 'routes', 'Auth routes — /auth/login, /auth/register, /auth/forgot-password.')
                     ]
                   },
                   {
-                    name: 'dashboard',
-                    type: 'folder',
-                    desc: 'Dashboard feature — the main landing page after login. Shows statistics, charts, and recent activity. Lazy-loaded.',
+                    name: 'dashboard', type: 'folder',
+                    desc: 'Dashboard feature — stats, charts, activity feed. Lazy-loaded.',
                     children: [
                       {
-                        name: 'pages',
-                        type: 'folder',
-                        desc: 'Dashboard pages — routable page components for the dashboard feature.',
-                        children: [
-                          {
-                            name: 'dashboard-home',
-                            type: 'folder',
-                            desc: 'Dashboard home page component — the main dashboard view with stats cards, charts, and activity feed.',
-                            children: [
-                              f('dashboard-home.component.ts', 'component', 'Dashboard home component class — fetches and displays dashboard data (stats, recent activity, charts).'),
-                              f('dashboard-home.component.html', 'html', 'Dashboard home template — layout with stats cards grid, charts section, and activity feed panel.'),
-                              f('dashboard-home.component.scss', 'style', 'Dashboard home styles — responsive grid layout for stats cards, chart containers, and activity feed.'),
-                              f('dashboard-home.component.spec.ts', 'spec', 'Dashboard home tests — verifies data loading, stats display, and component initialization.')
-                            ]
-                          }
-                        ]
+                        name: 'pages', type: 'folder', desc: 'Dashboard page components.',
+                        children: [componentFolder('dashboard-home', 'Dashboard home — stats cards, charts, activity feed.')]
                       },
                       {
-                        name: 'components',
-                        type: 'folder',
-                        desc: 'Dashboard-specific components — child components used only within the dashboard feature.',
+                        name: 'components', type: 'folder', desc: 'Dashboard-specific child components.',
                         children: [
-                          {
-                            name: 'stats-card',
-                            type: 'folder',
-                            desc: 'Stats card component — displays a single statistic with title, value, icon, and trend indicator.',
-                            children: [
-                              f('stats-card.component.ts', 'component', 'Stats card component class — accepts inputs for title, value, icon, and trend (up/down percentage).'),
-                              f('stats-card.component.html', 'html', 'Stats card template — displays the stat with an icon, value, label, and colored trend arrow.')
-                            ]
-                          },
-                          {
-                            name: 'activity-feed',
-                            type: 'folder',
-                            desc: 'Activity feed component — shows a timeline of recent user/system activities.',
-                            children: [
-                              f('activity-feed.component.ts', 'component', 'Activity feed component class — receives an activity list and renders a scrollable timeline.'),
-                              f('activity-feed.component.html', 'html', 'Activity feed template — timeline layout with avatar, action description, and relative timestamp.')
-                            ]
-                          }
+                          componentFolder('stats-card', 'Stats card — title, value, icon, trend indicator.'),
+                          componentFolder('activity-feed', 'Activity feed — timeline of recent events.')
                         ]
                       },
-                      f('dashboard.routes.ts', 'routes', 'Dashboard routes — defines child routes for the dashboard feature, typically just the dashboard-home page.')
+                      f('dashboard.routes.ts', 'routes', 'Dashboard routes — loads dashboard-home page.')
                     ]
                   },
                   {
-                    name: 'users',
-                    type: 'folder',
-                    desc: 'Users feature — user management: list, detail, create, edit. Lazy-loaded via users.routes.ts.',
+                    name: 'users', type: 'folder',
+                    desc: 'Users feature — list, detail, create, edit. Lazy-loaded.',
                     children: [
                       {
-                        name: 'pages',
-                        type: 'folder',
-                        desc: 'Users pages — routable page components for the users feature.',
+                        name: 'pages', type: 'folder', desc: 'User page components.',
                         children: [
-                          componentFolder('user-list', 'User list page — displays a searchable, sortable, paginated table of users. Links to user detail pages.'),
-                          componentFolder('user-detail', 'User detail page — displays full user profile information with edit capabilities. Loads user by route param ID.')
+                          componentFolder('user-list', 'User list — searchable, sortable, paginated table.'),
+                          componentFolder('user-detail', 'User detail — full profile with edit capability.')
                         ]
                       },
-                      {
-                        name: 'services',
-                        type: 'folder',
-                        desc: 'Users-specific services — API services scoped to the users feature.',
-                        children: [
-                          f('users-api.service.ts', 'service', 'Users API service — handles HTTP calls for CRUD operations on users (getAll, getById, create, update, delete).')
-                        ]
+                      { name: 'services', type: 'folder', desc: 'Users-scoped API services.',
+                        children: [f('users-api.service.ts', 'service', 'Users API — CRUD: getAll, getById, create, update, delete.')]
                       },
-                      {
-                        name: 'models',
-                        type: 'folder',
-                        desc: 'Users models — TypeScript interfaces specific to the users feature.',
-                        children: [
-                          f('user-feature.model.ts', 'model', 'User feature model — defines UserListItem, UserDetail, CreateUserRequest, and UpdateUserRequest interfaces.')
-                        ]
+                      { name: 'models', type: 'folder', desc: 'User feature TypeScript interfaces.',
+                        children: [f('user-feature.model.ts', 'model', 'UserListItem, UserDetail, CreateUserRequest, UpdateUserRequest.')]
                       },
-                      f('users.routes.ts', 'routes', 'Users routes — defines child routes: /users (list) and /users/:id (detail).')
+                      f('users.routes.ts', 'routes', 'Users routes — /users (list) and /users/:id (detail).')
                     ]
                   }
                 ]
               },
               {
-                name: 'layout',
-                type: 'folder',
-                desc: 'Layout components — structural components that form the application shell: header, sidebar, footer, and main layout wrapper.',
+                name: 'layout', type: 'folder',
+                desc: 'Layout components — app shell: header, sidebar, footer, main layout wrapper.',
                 children: [
                   {
-                    name: 'header',
-                    type: 'folder',
-                    desc: 'Header component — the top navigation bar with logo, nav links, user menu, and theme toggle.',
+                    name: 'header', type: 'folder', desc: 'Top navigation bar.',
                     children: [
-                      f('header.component.ts', 'component', 'Header component class — handles navigation state, user menu toggle, and theme switching.'),
-                      f('header.component.html', 'html', 'Header template — logo, navigation links, search bar, notifications icon, and user avatar dropdown.'),
-                      f('header.component.scss', 'style', 'Header styles — sticky positioning, responsive nav collapse, and glassmorphism background.')
+                      f('header.component.ts', 'component', 'Header component — nav state, user menu, theme toggle.'),
+                      f('header.component.html', 'html', 'Header template — logo, nav links, search, user avatar.'),
+                      f('header.component.scss', 'style', 'Header styles — sticky, responsive, glassmorphism.')
                     ]
                   },
                   {
-                    name: 'sidebar',
-                    type: 'folder',
-                    desc: 'Sidebar component — vertical navigation panel with menu items, icons, and collapsible sections.',
+                    name: 'sidebar', type: 'folder', desc: 'Vertical navigation panel.',
                     children: [
-                      f('sidebar.component.ts', 'component', 'Sidebar component class — manages sidebar open/closed state, active route highlighting, and menu items.'),
-                      f('sidebar.component.html', 'html', 'Sidebar template — vertical nav with icons, labels, nested menu groups, and collapse toggle.'),
-                      f('sidebar.component.scss', 'style', 'Sidebar styles — fixed positioning, slide animation, responsive overlay on mobile.')
+                      f('sidebar.component.ts', 'component', 'Sidebar component — open/close state, route highlighting.'),
+                      f('sidebar.component.html', 'html', 'Sidebar template — icons, labels, nested groups.'),
+                      f('sidebar.component.scss', 'style', 'Sidebar styles — fixed, slide animation, mobile overlay.')
                     ]
                   },
                   {
-                    name: 'footer',
-                    type: 'folder',
-                    desc: 'Footer component — bottom section with copyright, links, and branding.',
+                    name: 'footer', type: 'folder', desc: 'Footer with copyright and links.',
                     children: [
-                      f('footer.component.ts', 'component', 'Footer component class — displays copyright year dynamically and footer navigation links.'),
-                      f('footer.component.html', 'html', 'Footer template — copyright text, social links, and legal/policy links.'),
-                      f('footer.component.scss', 'style', 'Footer styles — border-top separator, centered content, responsive link layout.')
+                      f('footer.component.ts', 'component', 'Footer component — dynamic copyright year.'),
+                      f('footer.component.html', 'html', 'Footer template — copyright, social links.'),
+                      f('footer.component.scss', 'style', 'Footer styles — border-top, centered content.')
                     ]
                   },
                   {
-                    name: 'main-layout',
-                    type: 'folder',
-                    desc: 'Main layout component — composes header + sidebar + router-outlet + footer into the primary app shell.',
+                    name: 'main-layout', type: 'folder', desc: 'Composes header + sidebar + router-outlet + footer.',
                     children: [
-                      f('main-layout.component.ts', 'component', 'Main layout component class — orchestrates the app shell. Controls sidebar visibility and content area sizing.'),
-                      f('main-layout.component.html', 'html', 'Main layout template — structural wrapper: <app-header>, <app-sidebar>, <router-outlet>, <app-footer>.'),
-                      f('main-layout.component.scss', 'style', 'Main layout styles — CSS grid/flexbox layout for header, sidebar, content area, and footer positioning.')
+                      f('main-layout.component.ts', 'component', 'Main layout — sidebar visibility, content area sizing.'),
+                      f('main-layout.component.html', 'html', 'Main layout template — <app-header>, <app-sidebar>, <router-outlet>, <app-footer>.'),
+                      f('main-layout.component.scss', 'style', 'Main layout styles — CSS grid for shell positioning.')
                     ]
                   }
                 ]
@@ -392,24 +355,379 @@
     ]
   };
 
-  // Helper to create a file node
-  function f(name, type, desc) {
-    return { name: name, type: type, desc: desc };
+  // ========================================================================
+  // LARGE TREE (~200+ files) — adds state management (NgRx), api layer
+  // ========================================================================
+  var LARGE_TREE = {
+    name: 'my-large-app', type: 'folder',
+    desc: 'Large Angular app with NgRx state management, dedicated API layer, and feature stores. Suitable for teams of 5-15 developers.',
+    children: [
+      f('angular.json', 'config', 'Angular workspace configuration.'),
+      f('package.json', 'json', 'Dependencies — includes @ngrx/store, @ngrx/effects, @ngrx/entity.'),
+      f('tsconfig.json', 'config', 'Root TypeScript configuration.'),
+      f('.eslintrc.json', 'json', 'ESLint with Angular and NgRx-specific rules.'),
+      f('README.md', 'misc', 'Project documentation including state management guide.'),
+      {
+        name: 'src', type: 'folder', desc: 'All application source code.',
+        children: [
+          f('main.ts', 'ts', 'Entry point — bootstrapApplication with full provider setup.'),
+          f('index.html', 'html', 'Root HTML page.'),
+          {
+            name: 'styles', type: 'folder', desc: 'Global SCSS files.',
+            children: [
+              f('_variables.scss', 'style', 'Design tokens — colors, spacing, typography.'),
+              f('_mixins.scss', 'style', 'SCSS mixins — breakpoints, flex helpers.'),
+              f('main.scss', 'style', 'Main entry stylesheet.')
+            ]
+          },
+          { name: 'assets', type: 'folder', desc: 'Static assets.', children: [] },
+          {
+            name: 'environments', type: 'folder', desc: 'Environment configs.',
+            children: [
+              f('environment.ts', 'env', 'Base environment.'),
+              f('environment.prod.ts', 'env', 'Production environment.')
+            ]
+          },
+          {
+            name: 'app', type: 'folder', desc: 'Application root directory.',
+            children: [
+              f('app.component.ts', 'component', 'Root standalone component.'),
+              f('app.component.html', 'html', 'Root template.'),
+              f('app.component.scss', 'style', 'Root styles.'),
+              f('app.config.ts', 'config', 'App config — provideStore, provideEffects, provideRouter.'),
+              f('app.routes.ts', 'routes', 'Root lazy routes with guards.'),
+              {
+                name: 'core', type: 'folder', desc: 'Singleton services, guards, interceptors.',
+                children: [
+                  { name: 'guards', type: 'folder', desc: 'Functional route guards.',
+                    children: [
+                      f('auth.guard.ts', 'guard', 'Auth guard — checks auth signal state.'),
+                      f('role.guard.ts', 'guard', 'Role guard — checks user role from store.')
+                    ]
+                  },
+                  { name: 'interceptors', type: 'folder', desc: 'HTTP interceptors.',
+                    children: [
+                      f('auth.interceptor.ts', 'interceptor', 'Attaches JWT token from store/signal.'),
+                      f('error.interceptor.ts', 'interceptor', 'Global error handler, dispatches error actions.')
+                    ]
+                  },
+                  { name: 'services', type: 'folder', desc: 'App-wide singleton services.',
+                    children: [
+                      f('auth.service.ts', 'service', 'Auth service — signal-based user state.'),
+                      f('logger.service.ts', 'service', 'Logger with external integration support.')
+                    ]
+                  },
+                  { name: 'models', type: 'folder', desc: 'Global TypeScript interfaces.', children: [f('user.model.ts', 'model', 'User interface.')] },
+                  { name: 'enums', type: 'folder', desc: 'TypeScript enums.', children: [f('role.enum.ts', 'enum', 'Role enum.')] },
+                  { name: 'constants', type: 'folder', desc: 'App constants.', children: [f('api-endpoints.constant.ts', 'constant', 'Centralized API endpoints.')] },
+                  { name: 'utils', type: 'folder', desc: 'Pure utility functions.', children: [f('date.util.ts', 'util', 'Date helpers.'), f('string.util.ts', 'util', 'String helpers.')] }
+                ]
+              },
+              {
+                name: 'shared', type: 'folder', desc: 'Shared standalone components, directives, pipes.',
+                children: [
+                  { name: 'components', type: 'folder', desc: 'Reusable UI components.',
+                    children: [
+                      componentFolder('button', 'Reusable button component.'),
+                      componentFolder('modal', 'Reusable modal component.')
+                    ]
+                  },
+                  { name: 'directives', type: 'folder', desc: 'Custom directives.', children: [f('highlight.directive.ts', 'directive', 'Highlight on hover.')] },
+                  { name: 'pipes', type: 'folder', desc: 'Custom pipes.', children: [f('truncate.pipe.ts', 'pipe', 'Truncate text.')] },
+                  { name: 'validators', type: 'folder', desc: 'Form validators.', children: [f('password-match.validator.ts', 'validator', 'Password match.')] }
+                ]
+              },
+              {
+                name: 'features', type: 'folder', desc: 'Lazy-loaded feature modules with NgRx stores.',
+                children: [
+                  {
+                    name: 'auth', type: 'folder', desc: 'Auth feature with NgRx store.',
+                    children: [
+                      {
+                        name: 'store', type: 'folder', desc: 'NgRx store for auth feature.',
+                        children: [
+                          f('auth.actions.ts', 'ts', 'Auth actions — login, loginSuccess, loginFailure, logout.'),
+                          f('auth.reducer.ts', 'ts', 'Auth reducer — handles auth state transitions.'),
+                          f('auth.selectors.ts', 'ts', 'Auth selectors — selectUser, selectIsAuthenticated, selectAuthError.'),
+                          f('auth.effects.ts', 'ts', 'Auth effects — handles login/logout side effects, token storage.')
+                        ]
+                      },
+                      { name: 'login', type: 'folder', desc: 'Login page.', children: componentFolder('login', 'Login page component.').children },
+                      { name: 'register', type: 'folder', desc: 'Register page.', children: [] },
+                      f('auth.routes.ts', 'routes', 'Auth lazy routes.')
+                    ]
+                  },
+                  {
+                    name: 'dashboard', type: 'folder', desc: 'Dashboard feature with NgRx store.',
+                    children: [
+                      {
+                        name: 'store', type: 'folder', desc: 'NgRx store for dashboard.',
+                        children: [
+                          f('dashboard.actions.ts', 'ts', 'Dashboard actions — loadStats, loadStatsSuccess.'),
+                          f('dashboard.reducer.ts', 'ts', 'Dashboard reducer — stats loading state.'),
+                          f('dashboard.selectors.ts', 'ts', 'Dashboard selectors — selectStats, selectIsLoading.'),
+                          f('dashboard.effects.ts', 'ts', 'Dashboard effects — fetches stats from API.')
+                        ]
+                      },
+                      f('dashboard.routes.ts', 'routes', 'Dashboard routes.')
+                    ]
+                  },
+                  {
+                    name: 'users', type: 'folder', desc: 'Users feature with NgRx entity store.',
+                    children: [
+                      {
+                        name: 'store', type: 'folder', desc: 'NgRx store for users.',
+                        children: [
+                          f('users.actions.ts', 'ts', 'Users actions — loadUsers, createUser, updateUser, deleteUser.'),
+                          f('users.reducer.ts', 'ts', 'Users reducer — entity adapter for normalized user state.'),
+                          f('users.selectors.ts', 'ts', 'Users selectors — selectAllUsers, selectUserById, selectTotal.'),
+                          f('users.effects.ts', 'ts', 'Users effects — CRUD API side effects.')
+                        ]
+                      },
+                      { name: 'user-list', type: 'folder', desc: 'User list page.', children: [] },
+                      { name: 'user-detail', type: 'folder', desc: 'User detail page.', children: [] },
+                      f('users.routes.ts', 'routes', 'Users routes.')
+                    ]
+                  }
+                ]
+              },
+              {
+                name: 'layout', type: 'folder', desc: 'App shell layout components.',
+                children: [
+                  { name: 'header', type: 'folder', desc: 'Header.', children: [f('header.component.ts', 'component', 'Header.'), f('header.component.html', 'html', 'Header template.'), f('header.component.scss', 'style', 'Header styles.')] },
+                  { name: 'footer', type: 'folder', desc: 'Footer.', children: [f('footer.component.ts', 'component', 'Footer.'), f('footer.component.html', 'html', 'Footer template.'), f('footer.component.scss', 'style', 'Footer styles.')] },
+                  { name: 'sidebar', type: 'folder', desc: 'Sidebar nav.', children: [f('sidebar.component.ts', 'component', 'Sidebar.'), f('sidebar.component.html', 'html', 'Sidebar template.'), f('sidebar.component.scss', 'style', 'Sidebar styles.')] }
+                ]
+              },
+              {
+                name: 'state', type: 'folder', desc: 'Root NgRx app state — combines all feature states.',
+                children: [
+                  f('app.state.ts', 'ts', 'AppState interface — root state shape combining all feature states.'),
+                  f('app.actions.ts', 'ts', 'Global app actions — appInit, appError.'),
+                  f('app.reducer.ts', 'ts', 'Root meta-reducer — global state initialization.')
+                ]
+              },
+              {
+                name: 'api', type: 'folder', desc: 'API layer — base service class and API configuration.',
+                children: [
+                  f('base-api.service.ts', 'service', 'Base API service — abstract class with CRUD methods, error handling, type-safe generics.'),
+                  f('api.config.ts', 'config', 'API configuration — base URL, headers, timeout from environment.')
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  // ========================================================================
+  // ENTERPRISE TREE (~500+ files) — Nx monorepo with libs, CI/CD
+  // ========================================================================
+  var ENTERPRISE_TREE = {
+    name: 'my-enterprise-nx', type: 'folder',
+    desc: 'Enterprise Nx monorepo — multiple apps and shared libs with CI/CD, documentation, and custom generators. For 15+ developer teams.',
+    children: [
+      f('nx.json', 'config', 'Nx workspace configuration — project graph, caching, affected commands.'),
+      f('package.json', 'json', 'Monorepo root package — workspace dependencies and scripts.'),
+      f('tsconfig.base.json', 'config', 'Base TypeScript config — shared paths for all libs and apps.'),
+      {
+        name: '.github', type: 'folder', desc: 'GitHub Actions CI/CD workflows.',
+        children: [
+          {
+            name: 'workflows', type: 'folder', desc: 'Workflow YAML files.',
+            children: [
+              f('ci.yml', 'config', 'CI pipeline — lint, test, build on PR. Uses Nx affected for speed.'),
+              f('deploy.yml', 'config', 'Deploy pipeline — deploys to staging/production on merge to main.')
+            ]
+          }
+        ]
+      },
+      {
+        name: 'docs', type: 'folder', desc: 'Architecture documentation and ADRs.',
+        children: [
+          f('architecture.md', 'misc', 'Architecture overview — system design, data flow, tech decisions.'),
+          f('contributing.md', 'misc', 'Contributing guide — branching strategy, commit conventions, PR process.'),
+          {
+            name: 'adr', type: 'folder', desc: 'Architecture Decision Records.',
+            children: [
+              f('001-state-management.md', 'misc', 'ADR 001 — decision to use NgRx with entity adapter.'),
+              f('002-testing-strategy.md', 'misc', 'ADR 002 — Jest for unit, Playwright for e2e.')
+            ]
+          }
+        ]
+      },
+      {
+        name: 'tools', type: 'folder', desc: 'Custom Nx generators and executors.',
+        children: [
+          {
+            name: 'generators', type: 'folder', desc: 'Custom code generators.',
+            children: [
+              { name: 'feature', type: 'folder', desc: 'Feature generator — scaffolds a complete feature lib with store, components, routes.', children: [] }
+            ]
+          }
+        ]
+      },
+      {
+        name: 'apps', type: 'folder', desc: 'Deployable application projects.',
+        children: [
+          {
+            name: 'main-app', type: 'folder', desc: 'Primary Angular application.',
+            children: [
+              {
+                name: 'src', type: 'folder', desc: 'App source code.',
+                children: [
+                  f('main.ts', 'ts', 'App entry point.'),
+                  {
+                    name: 'app', type: 'folder', desc: 'Root app module.',
+                    children: [
+                      f('app.component.ts', 'component', 'Root standalone component.'),
+                      f('app.config.ts', 'config', 'App config — provideStore, provideRouter, lib providers.'),
+                      f('app.routes.ts', 'routes', 'Root routes — lazy-loads from lib route configs.')
+                    ]
+                  },
+                  { name: 'assets', type: 'folder', desc: 'App-specific assets.', children: [] }
+                ]
+              },
+              f('project.json', 'config', 'Nx project config — build, serve, lint, test targets.')
+            ]
+          }
+        ]
+      },
+      {
+        name: 'libs', type: 'folder', desc: 'Shared library projects — each lib is independently versioned.',
+        children: [
+          {
+            name: 'shared-ui', type: 'folder', desc: 'UI component library — buttons, modals, forms, tables.',
+            children: [
+              {
+                name: 'src', type: 'folder', desc: 'Library source.',
+                children: [
+                  {
+                    name: 'lib', type: 'folder', desc: 'Library components.',
+                    children: [
+                      { name: 'button', type: 'folder', desc: 'Button component.', children: [f('button.component.ts', 'component', 'Reusable button.'), f('button.component.html', 'html', 'Button template.'), f('button.harness.ts', 'ts', 'Component harness for testing.')] },
+                      { name: 'modal', type: 'folder', desc: 'Modal component.', children: [f('modal.component.ts', 'component', 'Reusable modal.'), f('modal.component.html', 'html', 'Modal template.')] }
+                    ]
+                  },
+                  f('index.ts', 'ts', 'Public API barrel — exports all lib components.')
+                ]
+              },
+              f('project.json', 'config', 'Nx lib config — buildable, testable.')
+            ]
+          },
+          {
+            name: 'shared-utils', type: 'folder', desc: 'Pure utility functions — date, string, validators.',
+            children: [
+              { name: 'src', type: 'folder', desc: 'Utils source.', children: [f('index.ts', 'ts', 'Barrel exports for all utilities.')] },
+              f('project.json', 'config', 'Nx lib config.')
+            ]
+          },
+          {
+            name: 'auth-lib', type: 'folder', desc: 'Auth library — service, guards, NgRx store for auth.',
+            children: [
+              {
+                name: 'src', type: 'folder', desc: 'Auth lib source.',
+                children: [
+                  {
+                    name: 'lib', type: 'folder', desc: 'Auth lib modules.',
+                    children: [
+                      f('auth.service.ts', 'service', 'Shared auth service used by all apps.'),
+                      f('auth.guard.ts', 'guard', 'Functional auth guard exported from lib.'),
+                      {
+                        name: 'store', type: 'folder', desc: 'NgRx auth store.',
+                        children: [
+                          f('auth.actions.ts', 'ts', 'Auth actions.'),
+                          f('auth.reducer.ts', 'ts', 'Auth reducer.'),
+                          f('auth.selectors.ts', 'ts', 'Auth selectors.'),
+                          f('auth.effects.ts', 'ts', 'Auth effects.')
+                        ]
+                      }
+                    ]
+                  },
+                  f('index.ts', 'ts', 'Public API — exports service, guard, store.')
+                ]
+              },
+              f('project.json', 'config', 'Nx lib config.')
+            ]
+          },
+          {
+            name: 'core-lib', type: 'folder', desc: 'Core infrastructure — interceptors, config, base services.',
+            children: [
+              { name: 'src', type: 'folder', desc: 'Core lib source.', children: [f('index.ts', 'ts', 'Barrel exports.')] },
+              f('project.json', 'config', 'Nx lib config.')
+            ]
+          },
+          {
+            name: 'data-access', type: 'folder', desc: 'Data access layer — feature-specific API services.',
+            children: [
+              {
+                name: 'src', type: 'folder', desc: 'Data access source.',
+                children: [
+                  {
+                    name: 'lib', type: 'folder', desc: 'Feature API services.',
+                    children: [
+                      { name: 'users', type: 'folder', desc: 'Users data access.', children: [f('users.service.ts', 'service', 'Users API service.'), f('users.store.ts', 'ts', 'Users signal store.')] },
+                      { name: 'products', type: 'folder', desc: 'Products data access.', children: [f('products.service.ts', 'service', 'Products API service.'), f('products.store.ts', 'ts', 'Products signal store.')] }
+                    ]
+                  },
+                  f('index.ts', 'ts', 'Barrel exports for all data access.')
+                ]
+              },
+              f('project.json', 'config', 'Nx lib config.')
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  // ========================================================================
+  // Current tree state
+  // ========================================================================
+  var currentSize = 'medium';
+  var currentTree = MEDIUM_TREE;
+
+  var SIZE_DESCRIPTIONS = {
+    small: '🟢 <strong>Small App</strong> — ~20 files. Perfect for prototypes, learning projects, or single-developer side projects. Minimal structure with direct component files.',
+    medium: '🔵 <strong>Medium App</strong> — ~100+ files. The classic <code>core/shared/features</code> pattern. Ideal for 1–5 developers building a real-world SPA with auth, routing, and reusable components.',
+    large: '🟠 <strong>Large App</strong> — ~200+ files. Adds NgRx state management per feature, a dedicated API layer, and expanded testing. Best for 5–15 developers on a complex product.',
+    enterprise: '🔴 <strong>Enterprise (Nx)</strong> — ~500+ files. Nx monorepo with shared lib architecture, CI/CD pipelines, ADRs, and custom generators. Designed for 15+ developers across multiple teams.'
+  };
+
+  function switchProjectSize(size) {
+    currentSize = size;
+    switch (size) {
+      case 'small': currentTree = SMALL_TREE; break;
+      case 'large': currentTree = LARGE_TREE; break;
+      case 'enterprise': currentTree = ENTERPRISE_TREE; break;
+      default: currentTree = MEDIUM_TREE;
+    }
+    var treeContainer = document.getElementById('treeContainer');
+    treeContainer.innerHTML = '';
+    selectedRow = null;
+    document.getElementById('detailPlaceholder').style.display = '';
+    document.getElementById('detailContent').style.display = 'none';
+    renderTree(currentTree, treeContainer, '', 0);
+    var firstChildren = treeContainer.querySelector('.tree-node__children');
+    if (firstChildren) {
+      firstChildren.classList.add('open');
+      var firstToggle = treeContainer.querySelector('.tree-node__toggle');
+      if (firstToggle) firstToggle.classList.add('expanded');
+    }
+    var descEl = document.getElementById('sizeDescription');
+    if (descEl) descEl.innerHTML = SIZE_DESCRIPTIONS[size] || '';
+    document.querySelectorAll('.size-btn').forEach(function (btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-size') === size);
+    });
   }
 
-  // Helper to create a standard component folder (with ts, html, scss, spec)
-  function componentFolder(name, desc) {
-    return {
-      name: name,
-      type: 'folder',
-      desc: desc,
-      children: [
-        f(name + '.component.ts', 'component', desc),
-        f(name + '.component.html', 'html', 'Template for the ' + name + ' component — defines the component\'s HTML structure and Angular template bindings.'),
-        f(name + '.component.scss', 'style', 'Styles for the ' + name + ' component — scoped SCSS styles using Angular view encapsulation.'),
-        f(name + '.component.spec.ts', 'spec', 'Unit tests for the ' + name + ' component — verifies rendering, inputs, outputs, and user interactions.')
-      ]
-    };
+  function initProjectSizeToggle() {
+    document.querySelectorAll('.size-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        switchProjectSize(btn.getAttribute('data-size'));
+      });
+    });
   }
 
   // ========================================================================
@@ -417,10 +735,8 @@
   // ========================================================================
   function getIcon(node) {
     if (node.type === 'folder') return '📁';
-    var ext = node.name.split('.').pop();
     var nameLC = node.name.toLowerCase();
-    if (nameLC.includes('.component.spec')) return '🧪';
-    if (nameLC.includes('.spec.')) return '🧪';
+    if (nameLC.includes('.component.spec') || nameLC.includes('.spec.')) return '🧪';
     if (nameLC.includes('.component.ts')) return '🧩';
     if (nameLC.includes('.component.html')) return '📄';
     if (nameLC.includes('.component.scss')) return '🎨';
@@ -435,11 +751,16 @@
     if (nameLC.includes('.constant.')) return '📎';
     if (nameLC.includes('.util.')) return '🛠️';
     if (nameLC.includes('.validator.')) return '✅';
+    if (nameLC.includes('.harness.')) return '🔬';
+    if (nameLC.includes('.resolver.')) return '🔄';
     if (nameLC.includes('environment')) return '🌍';
+    var ext = nameLC.split('.').pop();
     if (ext === 'scss') return '🎨';
     if (ext === 'html') return '📄';
     if (ext === 'json') return '📋';
+    if (ext === 'yml' || ext === 'yaml') return '⚙️';
     if (ext === 'ts') return '📘';
+    if (ext === 'md') return '📝';
     return '📄';
   }
 
@@ -487,11 +808,14 @@
     if (name.includes('.constant.')) return 'Constant';
     if (name.includes('.util.')) return 'Utility';
     if (name.includes('.validator.')) return 'Validator';
+    if (name.includes('.resolver.')) return 'Resolver';
     if (name.includes('environment')) return 'Environment';
     if (name.endsWith('.scss')) return 'Styles';
     if (name.endsWith('.html')) return 'HTML';
     if (name.endsWith('.json')) return 'JSON';
     if (name.endsWith('.ts')) return 'TypeScript';
+    if (name.endsWith('.md')) return 'Markdown';
+    if (name.endsWith('.yml') || name.endsWith('.yaml')) return 'YAML';
     return 'File';
   }
 
@@ -513,25 +837,21 @@
     el.setAttribute('data-path', path);
     el.setAttribute('data-name', node.name.toLowerCase());
 
-    // Row
     var row = document.createElement('div');
     row.className = 'tree-node__row';
     row.setAttribute('data-depth', depth);
     row.style.paddingLeft = (depth * 8) + 'px';
 
-    // Toggle arrow
     var toggle = document.createElement('span');
     toggle.className = 'tree-node__toggle' + (hasChildren ? '' : ' hidden');
-    toggle.innerHTML = '&#9656;'; // right triangle
+    toggle.innerHTML = '&#9656;';
     row.appendChild(toggle);
 
-    // Icon
     var icon = document.createElement('span');
     icon.className = 'tree-node__icon ' + getColorClass(node);
     icon.textContent = getIcon(node);
     row.appendChild(icon);
 
-    // Name
     var nameSpan = document.createElement('span');
     nameSpan.className = 'tree-node__name ' + getColorClass(node);
     nameSpan.textContent = isFolder ? node.name + '/' : node.name;
@@ -539,10 +859,8 @@
 
     el.appendChild(row);
 
-    // Click handler — select & show detail
     row.addEventListener('click', function (e) {
       e.stopPropagation();
-      // Toggle folder
       if (hasChildren) {
         var childrenEl = el.querySelector(':scope > .tree-node__children');
         if (childrenEl) {
@@ -554,7 +872,6 @@
       selectNode(node, path, row);
     });
 
-    // Children
     if (hasChildren) {
       var childContainer = document.createElement('div');
       childContainer.className = 'tree-node__children';
@@ -571,7 +888,6 @@
     if (selectedRow) selectedRow.classList.remove('selected');
     row.classList.add('selected');
     selectedRow = row;
-
     document.getElementById('detailPlaceholder').style.display = 'none';
     var dc = document.getElementById('detailContent');
     dc.style.display = 'block';
@@ -586,21 +902,13 @@
   // Expand / Collapse helpers
   // ========================================================================
   function expandAll() {
-    document.querySelectorAll('.tree-node__children').forEach(function (el) {
-      el.classList.add('open');
-    });
-    document.querySelectorAll('.tree-node__toggle:not(.hidden)').forEach(function (el) {
-      el.classList.add('expanded');
-    });
+    document.querySelectorAll('.tree-node__children').forEach(function (el) { el.classList.add('open'); });
+    document.querySelectorAll('.tree-node__toggle:not(.hidden)').forEach(function (el) { el.classList.add('expanded'); });
   }
 
   function collapseAll() {
-    document.querySelectorAll('.tree-node__children').forEach(function (el) {
-      el.classList.remove('open');
-    });
-    document.querySelectorAll('.tree-node__toggle').forEach(function (el) {
-      el.classList.remove('expanded');
-    });
+    document.querySelectorAll('.tree-node__children').forEach(function (el) { el.classList.remove('open'); });
+    document.querySelectorAll('.tree-node__toggle').forEach(function (el) { el.classList.remove('expanded'); });
   }
 
   // ========================================================================
@@ -609,11 +917,8 @@
   function buildTreeText(node, prefix, isLast) {
     var line = '';
     var isFolder = node.type === 'folder';
-    if (prefix !== null) {
-      line = prefix + (isLast ? '└── ' : '├── ');
-    }
-    line += (isFolder ? '📁 ' : '📄 ') + node.name + (isFolder ? '/' : '') + '\n';
-
+    if (prefix !== null) { line = prefix + (isLast ? '└── ' : '├── '); }
+    line += node.name + (isFolder ? '/' : '') + '\n';
     if (isFolder && node.children && node.children.length > 0) {
       var childPrefix = prefix === null ? '' : prefix + (isLast ? '    ' : '│   ');
       node.children.forEach(function (child, i) {
@@ -624,43 +929,45 @@
   }
 
   function copyTreeToClipboard() {
-    var text = buildTreeText(TREE_DATA, null, true);
-    navigator.clipboard.writeText(text).then(function () {
-      showToast('📋 Folder structure copied to clipboard!');
-    }).catch(function () {
-      // Fallback for browsers without Clipboard API support
-      var ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      showToast('📋 Folder structure copied to clipboard!');
-    });
+    var text = buildTreeText(currentTree, null, true);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        showToast('📋 Folder structure copied!');
+      }).catch(function () { fallbackCopy(text); });
+    } else { fallbackCopy(text); }
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); showToast('📋 Copied!'); } catch(e) { showToast('❌ Copy failed'); }
+    document.body.removeChild(ta);
   }
 
   // ========================================================================
-  // Search / Filter
+  // Search — searches tree AND page content
   // ========================================================================
-  function searchTree(term) {
-    var rows = document.querySelectorAll('.tree-node__row');
+  function searchAll(term) {
     var status = document.getElementById('searchStatus');
+    var rows = document.querySelectorAll('.tree-node__row');
 
     if (!term) {
       rows.forEach(function (r) { r.classList.remove('search-match'); });
       document.querySelectorAll('.tree-node').forEach(function (n) { n.style.display = ''; });
       status.style.display = 'none';
+      document.querySelectorAll('.search-highlight').forEach(function (el) {
+        el.classList.remove('search-highlight');
+      });
       return;
     }
 
     var termLC = term.toLowerCase();
     var matchCount = 0;
 
-    // First show all nodes
     document.querySelectorAll('.tree-node').forEach(function (n) { n.style.display = ''; });
-
     rows.forEach(function (r) {
       var node = r.closest('.tree-node');
       var name = node.getAttribute('data-name');
@@ -670,7 +977,6 @@
       if (isMatch) matchCount++;
     });
 
-    // Expand parents of matches
     document.querySelectorAll('.tree-node__row.search-match').forEach(function (r) {
       var parent = r.closest('.tree-node').parentElement;
       while (parent) {
@@ -686,21 +992,237 @@
       }
     });
 
+    // Also search page sections
+    document.querySelectorAll('.search-highlight').forEach(function (el) {
+      el.classList.remove('search-highlight');
+    });
+    var pageTargets = document.querySelectorAll('.glass-card, .cheat-card, .arch-card, .naming-card, .principle-card, .extra-card, .anti-card, .migration-card');
+    pageTargets.forEach(function (card) {
+      if (card.textContent.toLowerCase().includes(termLC)) {
+        card.classList.add('search-highlight');
+        matchCount++;
+      }
+    });
+
     status.style.display = 'block';
-    status.textContent = matchCount + ' match' + (matchCount !== 1 ? 'es' : '') + ' found for "' + term + '"';
+    status.textContent = matchCount + ' match' + (matchCount !== 1 ? 'es' : '') + ' for "' + term + '"';
+  }
+
+  // ========================================================================
+  // Copy CLI Buttons
+  // ========================================================================
+  function initCopyCliButtons() {
+    document.querySelectorAll('.cheat-card').forEach(function (card) {
+      var codeEl = card.querySelector('.cheat-card__code');
+      if (!codeEl) return;
+      card.style.position = 'relative';
+      var btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.setAttribute('aria-label', 'Copy code');
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+      card.appendChild(btn);
+      btn.addEventListener('click', function () {
+        var text = codeEl.textContent.trim();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            btn.innerHTML = '✓';
+            btn.style.color = 'var(--success)';
+            setTimeout(function () {
+              btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+              btn.style.color = '';
+            }, 1500);
+            showToast('📋 Copied!');
+          });
+        }
+      });
+    });
+  }
+
+  // ========================================================================
+  // Tooltips
+  // ========================================================================
+  function initTooltips() {
+    var tooltip = document.createElement('div');
+    tooltip.className = 'tooltip-popup';
+    tooltip.style.cssText = 'position:fixed;z-index:9999;padding:6px 12px;background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color);border-radius:var(--radius-sm);font-size:0.8rem;pointer-events:none;opacity:0;transition:opacity 0.2s ease;max-width:260px;line-height:1.4;';
+    document.body.appendChild(tooltip);
+
+    document.addEventListener('mouseover', function (e) {
+      var target = e.target.closest('[data-tooltip]');
+      if (!target) return;
+      tooltip.textContent = target.getAttribute('data-tooltip');
+      tooltip.style.opacity = '1';
+    });
+
+    document.addEventListener('mousemove', function (e) {
+      var target = e.target.closest('[data-tooltip]');
+      if (!target) { tooltip.style.opacity = '0'; return; }
+      var x = e.clientX + 12;
+      var y = e.clientY - 32;
+      if (x + 270 > window.innerWidth) x = e.clientX - 270;
+      if (y < 8) y = e.clientY + 16;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    });
+
+    document.addEventListener('mouseout', function (e) {
+      var target = e.target.closest('[data-tooltip]');
+      if (!target) return;
+      tooltip.style.opacity = '0';
+    });
+  }
+
+  // ========================================================================
+  // Scroll Progress Bar
+  // ========================================================================
+  function initScrollProgress() {
+    var bar = document.getElementById('scrollProgress');
+    if (!bar) return;
+    window.addEventListener('scroll', function () {
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var progress = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+      bar.style.width = progress + '%';
+    }, { passive: true });
+  }
+
+  // ========================================================================
+  // Back to Top
+  // ========================================================================
+  function initBackToTop() {
+    var btn = document.getElementById('backToTop');
+    if (!btn) return;
+    window.addEventListener('scroll', function () {
+      btn.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    btn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // ========================================================================
+  // Scroll Animations (IntersectionObserver)
+  // ========================================================================
+  function initScrollAnimations() {
+    if (!window.IntersectionObserver) return;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.animate-on-scroll').forEach(function (el) {
+      observer.observe(el);
+    });
+  }
+
+  // ========================================================================
+  // Particle Canvas
+  // ========================================================================
+  function initParticles(canvas) {
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+    var COUNT = 45;
+
+    function resize() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    for (var i = 0; i < COUNT; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
+        r: Math.random() * 2.5 + 1
+      });
+    }
+
+    function getParticleColor() {
+      var theme = document.documentElement.getAttribute('data-theme');
+      return theme === 'light' ? 'rgba(9,105,218,0.35)' : 'rgba(88,166,255,0.4)';
+    }
+
+    function getLineColor() {
+      var theme = document.documentElement.getAttribute('data-theme');
+      return theme === 'light' ? 'rgba(9,105,218,' : 'rgba(88,166,255,';
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      var pColor = getParticleColor();
+      var lBase = getLineColor();
+      particles.forEach(function (p) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = pColor;
+        ctx.fill();
+      });
+
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var dx = particles[i].x - particles[j].x;
+          var dy = particles[i].y - particles[j].y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = lBase + (0.15 * (1 - dist / 120)) + ')';
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  // ========================================================================
+  // Keyboard Shortcuts
+  // ========================================================================
+  function initKeyboardShortcuts() {
+    document.addEventListener('keydown', function (e) {
+      var input = document.getElementById('searchInput');
+      var wrapper = document.getElementById('searchWrapper');
+      var navLinks = document.getElementById('navLinks');
+
+      if (e.key === '/' && document.activeElement !== input && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        wrapper.classList.add('open');
+        input.focus();
+      }
+
+      if (e.key === 'Escape') {
+        if (document.activeElement === input) {
+          input.value = '';
+          searchAll('');
+          wrapper.classList.remove('open');
+          input.blur();
+        }
+        if (navLinks && navLinks.classList.contains('open')) {
+          navLinks.classList.remove('open');
+        }
+      }
+    });
   }
 
   // ========================================================================
   // Theme
   // ========================================================================
   function initTheme() {
-    var saved = localStorage.getItem('theme');
-    if (saved) {
-      document.documentElement.setAttribute('data-theme', saved);
-    } else {
-      // Default to dark
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
+    var saved = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
   }
 
   function toggleTheme() {
@@ -719,13 +1241,11 @@
     toast.textContent = msg;
     toast.classList.add('show');
     clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(function () {
-      toast.classList.remove('show');
-    }, 2500);
+    toastTimeout = setTimeout(function () { toast.classList.remove('show'); }, 2500);
   }
 
   // ========================================================================
-  // Sticky header scroll effect
+  // Sticky header
   // ========================================================================
   function initScrollHeader() {
     var header = document.getElementById('header');
@@ -735,12 +1255,11 @@
   }
 
   // ========================================================================
-  // Active nav link highlighting
+  // Active nav link
   // ========================================================================
   function initActiveNav() {
     var sections = document.querySelectorAll('section[id]');
     var navLinks = document.querySelectorAll('.nav__link');
-
     function onScroll() {
       var scrollY = window.scrollY + 120;
       sections.forEach(function (sec) {
@@ -749,35 +1268,24 @@
         var id = sec.getAttribute('id');
         if (scrollY >= top && scrollY < top + height) {
           navLinks.forEach(function (link) {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === '#' + id) {
-              link.classList.add('active');
-            }
+            link.classList.toggle('active', link.getAttribute('href') === '#' + id);
           });
         }
       });
     }
-
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
   }
 
   // ========================================================================
-  // Mobile hamburger
+  // Mobile nav
   // ========================================================================
   function initMobileNav() {
     var hamburger = document.getElementById('hamburger');
     var navLinks = document.getElementById('navLinks');
-
-    hamburger.addEventListener('click', function () {
-      navLinks.classList.toggle('open');
-    });
-
-    // Close nav on link click
+    hamburger.addEventListener('click', function () { navLinks.classList.toggle('open'); });
     navLinks.querySelectorAll('.nav__link').forEach(function (link) {
-      link.addEventListener('click', function () {
-        navLinks.classList.remove('open');
-      });
+      link.addEventListener('click', function () { navLinks.classList.remove('open'); });
     });
   }
 
@@ -792,27 +1300,17 @@
 
     toggle.addEventListener('click', function () {
       wrapper.classList.toggle('open');
-      if (wrapper.classList.contains('open')) {
-        input.focus();
-      } else {
-        input.value = '';
-        searchTree('');
-      }
+      if (wrapper.classList.contains('open')) { input.focus(); }
+      else { input.value = ''; searchAll(''); }
     });
 
     input.addEventListener('input', function () {
       clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(function () {
-        searchTree(input.value.trim());
-      }, 200);
+      debounceTimer = setTimeout(function () { searchAll(input.value.trim()); }, 200);
     });
 
     input.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        input.value = '';
-        searchTree('');
-        wrapper.classList.remove('open');
-      }
+      if (e.key === 'Escape') { input.value = ''; searchAll(''); wrapper.classList.remove('open'); }
     });
   }
 
@@ -825,12 +1323,19 @@
     initActiveNav();
     initMobileNav();
     initSearch();
+    initKeyboardShortcuts();
+    initScrollProgress();
+    initBackToTop();
+    initScrollAnimations();
+    initTooltips();
 
-    // Render tree
+    // Particles
+    var canvas = document.getElementById('particleCanvas');
+    if (canvas) initParticles(canvas);
+
+    // Render tree (default: medium)
     var treeContainer = document.getElementById('treeContainer');
-    renderTree(TREE_DATA, treeContainer, '', 0);
-
-    // Auto-expand first level
+    renderTree(currentTree, treeContainer, '', 0);
     var firstChildren = treeContainer.querySelector('.tree-node__children');
     if (firstChildren) {
       firstChildren.classList.add('open');
@@ -838,10 +1343,18 @@
       if (firstToggle) firstToggle.classList.add('expanded');
     }
 
-    // Buttons
+    // Size description default
+    var descEl = document.getElementById('sizeDescription');
+    if (descEl) descEl.innerHTML = SIZE_DESCRIPTIONS['medium'];
+
+    // Wire up controls
     document.getElementById('expandAll').addEventListener('click', expandAll);
     document.getElementById('collapseAll').addEventListener('click', collapseAll);
     document.getElementById('copyTree').addEventListener('click', copyTreeToClipboard);
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+    initProjectSizeToggle();
+    initCopyCliButtons();
   });
+
 })();

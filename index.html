@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Angular Best Practices — Interactive folder structure guide for scalable Angular applications.">
-  <meta name="keywords" content="Angular, best practices, folder structure, architecture, guide">
+  <meta name="description" content="Angular 17+ Best Practices — Interactive guide to folder structure, state management, testing, performance, and migration.">
+  <meta name="keywords" content="Angular, best practices, standalone components, signals, NgRx, folder structure, architecture">
   <meta name="author" content="Omaizer21">
-  <title>Angular Best Practices — Folder Structure Guide</title>
+  <title>Angular Best Practices — Interactive Guide</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,11 +14,12 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Header / Navigation -->
+  <div id="scrollProgress"></div>
+
   <header class="header" id="header">
     <nav class="nav container">
       <a href="#hero" class="nav__logo">
-        <span class="nav__logo-icon">📐</span>
+        <span class="nav__logo-icon">&#x1F4D0;</span>
         <span class="nav__logo-text">Angular<span class="accent">BP</span></span>
       </a>
       <ul class="nav__links" id="navLinks">
@@ -26,14 +27,19 @@
         <li><a href="#architecture" class="nav__link">Architecture</a></li>
         <li><a href="#naming" class="nav__link">Naming</a></li>
         <li><a href="#principles" class="nav__link">Principles</a></li>
+        <li><a href="#state" class="nav__link">State</a></li>
+        <li><a href="#testing" class="nav__link">Testing</a></li>
+        <li><a href="#performance" class="nav__link">Performance</a></li>
+        <li><a href="#anti-patterns" class="nav__link">Anti-patterns</a></li>
+        <li><a href="#migration" class="nav__link">Migration</a></li>
         <li><a href="#cheatsheet" class="nav__link">Cheat Sheet</a></li>
       </ul>
       <div class="nav__actions">
         <div class="search-wrapper" id="searchWrapper">
-          <button class="btn-icon" id="searchToggle" aria-label="Search">
+          <button class="btn-icon" id="searchToggle" aria-label="Search (press / to focus)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </button>
-          <input type="text" class="search-input" id="searchInput" placeholder="Search files & folders…" autocomplete="off">
+          <input type="text" class="search-input" id="searchInput" placeholder="Search… (press /)" autocomplete="off">
         </div>
         <button class="btn-icon theme-toggle" id="themeToggle" aria-label="Toggle theme">
           <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -47,33 +53,45 @@
   </header>
 
   <main>
-    <!-- Hero Section -->
     <section class="hero" id="hero">
       <div class="hero__bg"></div>
+      <canvas id="particleCanvas"></canvas>
       <div class="container hero__content">
-        <div class="hero__badge">📂 Open Source Guide</div>
+        <div class="hero__badge">&#x1F4C2; Angular 17+ Guide &mdash; Standalone &middot; Signals &middot; @if/@for</div>
         <h1 class="hero__title">Angular <span class="gradient-text">Best Practices</span></h1>
-        <p class="hero__subtitle">A comprehensive, interactive guide to structuring scalable Angular applications using the <strong>core / shared / features</strong> pattern.</p>
+        <p class="hero__subtitle">A comprehensive, interactive reference for structuring scalable Angular 17+ applications &mdash; from small prototypes to enterprise monorepos.</p>
         <div class="hero__actions">
           <a href="#folder-tree" class="btn btn--primary">Explore Structure</a>
-          <a href="#architecture" class="btn btn--outline">Learn More</a>
+          <a href="#state" class="btn btn--outline">State Management</a>
+          <a href="#migration" class="btn btn--outline">Migration Guide</a>
         </div>
         <div class="hero__stats">
-          <div class="hero__stat"><span class="hero__stat-num">100+</span><span class="hero__stat-label">Files</span></div>
-          <div class="hero__stat"><span class="hero__stat-num">5</span><span class="hero__stat-label">Layers</span></div>
-          <div class="hero__stat"><span class="hero__stat-num">3</span><span class="hero__stat-label">Feature Modules</span></div>
+          <div class="hero__stat"><span class="hero__stat-num">4</span><span class="hero__stat-label">Project Sizes</span></div>
+          <div class="hero__stat"><span class="hero__stat-num">10</span><span class="hero__stat-label">Sections</span></div>
+          <div class="hero__stat"><span class="hero__stat-num">17+</span><span class="hero__stat-label">Angular Version</span></div>
+          <div class="hero__stat"><span class="hero__stat-num">&#x2F;</span><span class="hero__stat-label">Search Shortcut</span></div>
         </div>
       </div>
     </section>
 
-    <!-- Interactive Folder Tree Section -->
     <section class="section" id="folder-tree">
       <div class="container">
-        <div class="section__header">
+        <div class="section__header animate-on-scroll">
           <h2 class="section__title">Interactive Folder Tree</h2>
-          <p class="section__subtitle">Click folders to expand/collapse. Click any item to see its explanation.</p>
+          <p class="section__subtitle">Choose a project size, then click folders to expand/collapse and any item to see its purpose.</p>
         </div>
-        <div class="tree-controls">
+
+        <div class="animate-on-scroll">
+          <div class="size-toggle-group" role="group" aria-label="Project size">
+            <button class="size-btn" data-size="small">&#x1F7E2; Small</button>
+            <button class="size-btn active" data-size="medium">&#x1F535; Medium</button>
+            <button class="size-btn" data-size="large">&#x1F7E0; Large</button>
+            <button class="size-btn" data-size="enterprise">&#x1F534; Enterprise</button>
+          </div>
+          <p class="size-description" id="sizeDescription"></p>
+        </div>
+
+        <div class="tree-controls animate-on-scroll">
           <button class="btn btn--small" id="expandAll">Expand All</button>
           <button class="btn btn--small" id="collapseAll">Collapse All</button>
           <button class="btn btn--small btn--accent" id="copyTree">
@@ -81,16 +99,16 @@
             Copy Structure
           </button>
         </div>
-        <div class="tree-layout">
+
+        <div class="tree-layout animate-on-scroll">
           <div class="tree-panel">
-            <div class="tree-container" id="treeContainer">
-              <!-- Tree rendered by JS -->
-            </div>
+            <div class="tree-container" id="treeContainer"></div>
           </div>
           <div class="detail-panel glass-card" id="detailPanel">
             <div class="detail-placeholder" id="detailPlaceholder">
-              <div class="detail-placeholder__icon">👈</div>
-              <p>Click on any file or folder to see its description and purpose.</p>
+              <div class="detail-placeholder__icon">&#x1F448;</div>
+              <p>Click any file or folder to see its description and purpose.</p>
+              <p style="margin-top:12px;font-size:0.8rem;"><span class="kbd-hint">/</span> to search &nbsp; <span class="kbd-hint">Esc</span> to close</p>
             </div>
             <div class="detail-content" id="detailContent" style="display:none;">
               <div class="detail-content__header">
@@ -104,246 +122,1077 @@
           </div>
         </div>
         <p class="search-status" id="searchStatus" style="display:none;"></p>
+
+        <div class="comparison-table-wrap animate-on-scroll">
+          <table class="comparison-table" aria-label="Project size comparison">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th><span class="size-tag size-tag--small">Small</span></th>
+                <th><span class="size-tag size-tag--medium">Medium</span></th>
+                <th><span class="size-tag size-tag--large">Large</span></th>
+                <th><span class="size-tag size-tag--enterprise">Enterprise</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Files</td><td>~20</td><td>~100+</td><td>~200+</td><td>~500+</td></tr>
+              <tr><td>Team Size</td><td>1 dev</td><td>1&ndash;5 devs</td><td>5&ndash;15 devs</td><td>15+ devs</td></tr>
+              <tr><td>State</td><td data-tooltip="Simple signal-based services are enough for small apps">Signals</td><td data-tooltip="Service + Signals pattern covers most cases">Service+Signals</td><td data-tooltip="NgRx for complex, shared state across features">NgRx</td><td data-tooltip="NgRx with Nx libs and shared state">NgRx+Nx</td></tr>
+              <tr><td>Testing</td><td>Basic</td><td>Unit+E2E</td><td>Full suite</td><td>CI/CD+coverage</td></tr>
+              <tr><td>Build Speed</td><td>Fast</td><td>Medium</td><td>Longer</td><td>Nx caching</td></tr>
+              <tr><td>Modules</td><td data-tooltip="Standalone components without NgModules">Standalone</td><td>Standalone</td><td>Standalone</td><td data-tooltip="Nx library projects as boundaries">Nx Libs</td></tr>
+              <tr><td>Routing</td><td>Simple</td><td>Lazy routes</td><td>Lazy+guards</td><td>Micro-frontends</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
-    <!-- Architecture Overview Section -->
     <section class="section section--alt" id="architecture">
       <div class="container">
-        <div class="section__header">
+        <div class="section__header animate-on-scroll">
           <h2 class="section__title">Architecture Overview</h2>
-          <p class="section__subtitle">Understanding the core / shared / features pattern for scalable Angular apps.</p>
+          <p class="section__subtitle">The <strong>core / shared / features / layout</strong> pattern for scalable standalone Angular apps.</p>
         </div>
         <div class="arch-grid">
-          <div class="arch-card glass-card">
-            <div class="arch-card__icon">🧠</div>
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F9E0;</div>
             <h3 class="arch-card__title">core/</h3>
-            <p class="arch-card__desc">Singleton services, guards, interceptors, and utilities used <strong>app-wide</strong>. Imported <em>only once</em> in the root module. Contains authentication logic, HTTP interceptors, global services, constants, enums, and models.</p>
+            <p class="arch-card__desc">Singleton services, <span data-tooltip="In Angular 17+, guards are plain functions: export const authGuard = () => inject(AuthService).isLoggedIn()">functional guards</span>, <span data-tooltip="Functional interceptors use HttpInterceptorFn type">functional interceptors</span>, models, enums, constants, and utilities. Provided at the root &mdash; app-wide singletons.</p>
             <ul class="arch-card__list">
-              <li>Guards (auth, role, no-auth)</li>
-              <li>Interceptors (auth, error, loading, cache)</li>
-              <li>Singleton services</li>
+              <li>Functional guards (auth, role, no-auth)</li>
+              <li>Functional interceptors (auth, error, loading)</li>
+              <li>Singleton services with <code>inject()</code></li>
               <li>Global models, enums, constants</li>
-              <li>Utility functions</li>
+              <li>Pure utility functions</li>
             </ul>
           </div>
-          <div class="arch-card glass-card">
-            <div class="arch-card__icon">🔗</div>
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F517;</div>
             <h3 class="arch-card__title">shared/</h3>
-            <p class="arch-card__desc">Reusable components, directives, and pipes <strong>shared across features</strong>. Imported by any feature module that needs them. Contains UI building blocks like buttons, modals, tables, and form validators.</p>
+            <p class="arch-card__desc">Reusable <span data-tooltip="Standalone components declare their own imports — no SharedModule needed">standalone components</span>, directives, and pipes used across multiple features. Import directly into feature components.</p>
             <ul class="arch-card__list">
-              <li>Reusable UI components</li>
-              <li>Custom directives</li>
+              <li>Reusable UI components (standalone)</li>
+              <li>Custom attribute directives</li>
               <li>Custom pipes</li>
-              <li>Form validators</li>
+              <li>Reactive form validators</li>
             </ul>
           </div>
-          <div class="arch-card glass-card">
-            <div class="arch-card__icon">🧩</div>
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F9E9;</div>
             <h3 class="arch-card__title">features/</h3>
-            <p class="arch-card__desc"><strong>Lazy-loaded feature modules</strong>, each representing a distinct business domain. Each feature has its own pages, components, services, models, and routes — fully self-contained.</p>
+            <p class="arch-card__desc"><span data-tooltip="loadComponent() and loadChildren() in routes.ts enable lazy loading without NgModules">Lazy-loaded feature areas</span>, each a distinct business domain. Each feature owns its pages, components, services, models, and routes &mdash; fully self-contained.</p>
             <ul class="arch-card__list">
               <li>Auth (login, register, forgot-password)</li>
-              <li>Dashboard (stats, activity feed)</li>
-              <li>Users (list, detail)</li>
-              <li>Each feature has its own routes file</li>
+              <li>Dashboard (stats, charts, activity)</li>
+              <li>Users (list, detail, edit)</li>
+              <li>Each feature exposes only its routes file</li>
             </ul>
           </div>
-          <div class="arch-card glass-card">
-            <div class="arch-card__icon">🖼️</div>
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F5BC;&#xFE0F;</div>
             <h3 class="arch-card__title">layout/</h3>
-            <p class="arch-card__desc">Layout components that define the <strong>visual shell</strong> of the application — header, sidebar, footer, and the main layout wrapper that composes them together.</p>
+            <p class="arch-card__desc">Layout components forming the visual shell: header, sidebar, footer, and main layout wrapper that composes them with <code>&lt;router-outlet&gt;</code>.</p>
             <ul class="arch-card__list">
-              <li>Header with navigation</li>
-              <li>Sidebar navigation</li>
-              <li>Footer</li>
-              <li>Main layout composition</li>
+              <li>Header with navigation &amp; theme toggle</li>
+              <li>Collapsible sidebar navigation</li>
+              <li>Footer with links</li>
+              <li>Main layout composition component</li>
             </ul>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Naming Conventions Section -->
     <section class="section" id="naming">
       <div class="container">
-        <div class="section__header">
+        <div class="section__header animate-on-scroll">
           <h2 class="section__title">Naming Conventions</h2>
-          <p class="section__subtitle">Angular's consistent naming conventions for files, classes, and selectors.</p>
+          <p class="section__subtitle">Angular&#39;s consistent file naming conventions for every artifact type.</p>
         </div>
         <div class="naming-grid">
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext">.component.ts</span>
             <h4 class="naming-card__title">Components</h4>
-            <p class="naming-card__desc">UI building blocks. File: <code>hero.component.ts</code> → Class: <code>HeroComponent</code> → Selector: <code>app-hero</code></p>
+            <p class="naming-card__desc">UI building blocks. <code>hero.component.ts</code> &rarr; class <code>HeroComponent</code> &rarr; selector <code>app-hero</code>. Always standalone in Angular 17+.</p>
           </div>
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-service">.service.ts</span>
             <h4 class="naming-card__title">Services</h4>
-            <p class="naming-card__desc">Business logic &amp; data access. File: <code>auth.service.ts</code> → Class: <code>AuthService</code></p>
+            <p class="naming-card__desc">Business logic &amp; data access. <code>auth.service.ts</code> &rarr; class <code>AuthService</code>. Use <code>inject()</code> over constructor injection.</p>
           </div>
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-guard">.guard.ts</span>
             <h4 class="naming-card__title">Guards</h4>
-            <p class="naming-card__desc">Route protection. File: <code>auth.guard.ts</code> → Function: <code>authGuard</code></p>
+            <p class="naming-card__desc">Route protection. <code>auth.guard.ts</code> &rarr; function <code>authGuard</code>. Angular 17+ uses functional guards via <code>CanActivateFn</code>.</p>
           </div>
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-interceptor">.interceptor.ts</span>
             <h4 class="naming-card__title">Interceptors</h4>
-            <p class="naming-card__desc">HTTP request/response middleware. File: <code>auth.interceptor.ts</code> → Function: <code>authInterceptor</code></p>
+            <p class="naming-card__desc">HTTP middleware. <code>auth.interceptor.ts</code> &rarr; function <code>authInterceptor</code>. Uses <code>HttpInterceptorFn</code> type.</p>
           </div>
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-pipe">.pipe.ts</span>
             <h4 class="naming-card__title">Pipes</h4>
-            <p class="naming-card__desc">Template data transformation. File: <code>truncate.pipe.ts</code> → Class: <code>TruncatePipe</code></p>
+            <p class="naming-card__desc">Template transforms. <code>truncate.pipe.ts</code> &rarr; class <code>TruncatePipe</code>. Mark as <code>standalone: true</code>.</p>
           </div>
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-directive">.directive.ts</span>
             <h4 class="naming-card__title">Directives</h4>
-            <p class="naming-card__desc">DOM behavior modifiers. File: <code>highlight.directive.ts</code> → Class: <code>HighlightDirective</code></p>
+            <p class="naming-card__desc">DOM behavior. <code>highlight.directive.ts</code> &rarr; class <code>HighlightDirective</code>. Mark as <code>standalone: true</code>.</p>
           </div>
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-model">.model.ts</span>
             <h4 class="naming-card__title">Models</h4>
-            <p class="naming-card__desc">TypeScript interfaces/types. File: <code>user.model.ts</code> → Interface: <code>User</code></p>
+            <p class="naming-card__desc">TypeScript interfaces/types. <code>user.model.ts</code> &rarr; interface <code>User</code>. Prefer interfaces over classes for data shapes.</p>
           </div>
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-spec">.spec.ts</span>
             <h4 class="naming-card__title">Tests</h4>
-            <p class="naming-card__desc">Unit tests. File: <code>hero.component.spec.ts</code> → Co-located with source file</p>
+            <p class="naming-card__desc">Unit tests co-located with source. <code>hero.component.spec.ts</code> tests <code>HeroComponent</code>. Use <code>TestBed</code> for Angular-specific testing.</p>
           </div>
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-routes">.routes.ts</span>
             <h4 class="naming-card__title">Routes</h4>
-            <p class="naming-card__desc">Route definitions. File: <code>auth.routes.ts</code> → Export: <code>AUTH_ROUTES</code></p>
+            <p class="naming-card__desc">Route definitions. <code>auth.routes.ts</code> &rarr; export <code>AUTH_ROUTES</code>. Use <code>loadComponent</code> and <code>loadChildren</code>.</p>
           </div>
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
+            <span class="naming-card__ext ext-resolver">.resolver.ts</span>
+            <h4 class="naming-card__title">Resolvers</h4>
+            <p class="naming-card__desc">Pre-load route data. <code>user.resolver.ts</code> &rarr; function <code>userResolver</code>. Uses <code>ResolveFn&lt;T&gt;</code> functional type in Angular 17+.</p>
+          </div>
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-enum">.enum.ts</span>
             <h4 class="naming-card__title">Enums</h4>
-            <p class="naming-card__desc">Enumerated types. File: <code>role.enum.ts</code> → Enum: <code>Role</code></p>
+            <p class="naming-card__desc">Enumerated types. <code>role.enum.ts</code> &rarr; enum <code>Role</code>. Consider <code>as const</code> objects for tree-shakable alternatives.</p>
           </div>
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-constant">.constant.ts</span>
             <h4 class="naming-card__title">Constants</h4>
-            <p class="naming-card__desc">App-wide constants. File: <code>api-endpoints.constant.ts</code> → Export: <code>API_ENDPOINTS</code></p>
+            <p class="naming-card__desc">App-wide constants. <code>api-endpoints.constant.ts</code> &rarr; export <code>API_ENDPOINTS</code>. Use <code>as const</code> for type narrowing.</p>
           </div>
-          <div class="naming-card glass-card">
+          <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-util">.util.ts</span>
             <h4 class="naming-card__title">Utilities</h4>
-            <p class="naming-card__desc">Helper functions. File: <code>date.util.ts</code> → Pure functions</p>
+            <p class="naming-card__desc">Pure helper functions. <code>date.util.ts</code> &rarr; named exports. No Angular dependencies &mdash; easily unit-testable.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Key Principles Section -->
     <section class="section section--alt" id="principles">
       <div class="container">
-        <div class="section__header">
+        <div class="section__header animate-on-scroll">
           <h2 class="section__title">Key Principles</h2>
           <p class="section__subtitle">The design principles behind a well-architected Angular application.</p>
         </div>
         <div class="principles-grid">
-          <div class="principle-card glass-card">
+          <div class="principle-card glass-card animate-on-scroll">
             <div class="principle-card__letter">S</div>
             <h4 class="principle-card__title">Single Responsibility</h4>
-            <p class="principle-card__desc">Each file, class, and module should have one reason to change. Components handle presentation; services handle data and logic.</p>
+            <p class="principle-card__desc">Each file and class has one reason to change. Components handle UI; services handle logic; resolvers handle data loading.</p>
           </div>
-          <div class="principle-card glass-card">
+          <div class="principle-card glass-card animate-on-scroll">
             <div class="principle-card__letter">O</div>
             <h4 class="principle-card__title">Open / Closed</h4>
-            <p class="principle-card__desc">Design modules and services to be extended without modifying existing code. Use interfaces and dependency injection.</p>
+            <p class="principle-card__desc">Design services and components to be extended without modifying existing code. Use interfaces and DI tokens.</p>
           </div>
-          <div class="principle-card glass-card">
+          <div class="principle-card glass-card animate-on-scroll">
             <div class="principle-card__letter">L</div>
             <h4 class="principle-card__title">Liskov Substitution</h4>
-            <p class="principle-card__desc">Derived classes or implementations should be substitutable for their base types without breaking the app.</p>
+            <p class="principle-card__desc">Derived classes should be substitutable for their base types. Use interfaces to define contracts between layers.</p>
           </div>
-          <div class="principle-card glass-card">
+          <div class="principle-card glass-card animate-on-scroll">
             <div class="principle-card__letter">I</div>
             <h4 class="principle-card__title">Interface Segregation</h4>
-            <p class="principle-card__desc">Prefer many small, specific interfaces over one large interface. Keep service contracts lean and focused.</p>
+            <p class="principle-card__desc">Prefer many small, specific interfaces. Keep service contracts lean &mdash; avoid god-service interfaces.</p>
           </div>
-          <div class="principle-card glass-card">
+          <div class="principle-card glass-card animate-on-scroll">
             <div class="principle-card__letter">D</div>
             <h4 class="principle-card__title">Dependency Inversion</h4>
-            <p class="principle-card__desc">Depend on abstractions, not concretions. Angular's DI system naturally encourages this via injection tokens and interfaces.</p>
+            <p class="principle-card__desc">Depend on abstractions via <code>inject()</code> and DI tokens. Angular&#39;s DI system naturally enforces this.</p>
           </div>
         </div>
         <div class="extra-principles">
-          <div class="extra-card glass-card">
-            <h4>🔄 DRY — Don't Repeat Yourself</h4>
-            <p>Extract shared logic into services, pipes, directives, and utility functions. The <code>shared/</code> folder is your best friend.</p>
+          <div class="extra-card glass-card animate-on-scroll">
+            <h4>&#x1F504; DRY &mdash; Don&#39;t Repeat Yourself</h4>
+            <p>Extract shared logic into services, pipes, directives, and utility functions. The <code>shared/</code> folder is your best friend for UI; <code>core/utils</code> for business logic.</p>
           </div>
-          <div class="extra-card glass-card">
-            <h4>📦 Lazy Loading</h4>
-            <p>Each feature module should be lazy-loaded via <code>loadChildren</code> or <code>loadComponent</code> in routes to keep the initial bundle small.</p>
+          <div class="extra-card glass-card animate-on-scroll">
+            <h4>&#x1F4E6; Lazy Loading</h4>
+            <p>Use <code>loadComponent()</code> and <code>loadChildren()</code> in routes to keep the initial bundle small. Every feature should be lazy by default.</p>
           </div>
-          <div class="extra-card glass-card">
-            <h4>🗂️ Feature Encapsulation</h4>
-            <p>Features own their pages, components, services, and models. Only the routes file is exposed to the rest of the app.</p>
+          <div class="extra-card glass-card animate-on-scroll">
+            <h4>&#x1F5C2;&#xFE0F; Feature Encapsulation</h4>
+            <p>Features own their pages, components, services, and models. Only the routes file is exposed to the rest of the app &mdash; no leaking internals.</p>
           </div>
-          <div class="extra-card glass-card">
-            <h4>🧪 Co-located Tests</h4>
-            <p>Spec files live next to the code they test (<code>*.spec.ts</code>). This makes it easy to find and maintain tests.</p>
+          <div class="extra-card glass-card animate-on-scroll">
+            <h4>&#x1F9EA; Co-located Tests</h4>
+            <p>Spec files live next to the code they test (<code>*.spec.ts</code>). This makes finding and maintaining tests natural &mdash; no separate test directory.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Cheat Sheet Section -->
-    <section class="section" id="cheatsheet">
+    <section class="section" id="state">
       <div class="container">
-        <div class="section__header">
+        <div class="section__header animate-on-scroll">
+          <h2 class="section__title">State Management</h2>
+          <p class="section__subtitle">Choose the right tool: Signals for local/simple state, NgRx for complex shared state.</p>
+        </div>
+        <div class="state-grid">
+          <div class="state-card glass-card animate-on-scroll">
+            <div class="state-card__header">
+              <div class="state-card__icon">&#x26A1;</div>
+              <div>
+                <div class="state-card__title">Signals <span class="state-card__badge badge--signals">Recommended</span></div>
+                <div class="state-card__subtitle">Angular 16+ &middot; Built-in &middot; Simple &amp; Medium apps</div>
+              </div>
+            </div>
+            <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:12px;">Reactive primitives built into Angular. Zero dependencies, fine-grained reactivity, and seamless integration with <code>OnPush</code> change detection. Best for local UI state and simple shared services.</p>
+            <pre class="code-block">// counter.service.ts
+import { Injectable, signal, computed } from &#39;@angular/core&#39;;
+
+@Injectable({ providedIn: &#39;root&#39; })
+export class CounterService {
+  private count = signal(0);
+  doubleCount = computed(() =&gt; this.count() * 2);
+
+  increment() { this.count.update(v =&gt; v + 1); }
+  decrement() { this.count.update(v =&gt; v - 1); }
+  reset() { this.count.set(0); }
+}
+
+// component.ts
+@Component({
+  standalone: true,
+  template: `
+    &lt;p&gt;Count: {{ counter.count() }}&lt;/p&gt;
+    &lt;p&gt;Double: {{ counter.doubleCount() }}&lt;/p&gt;
+    &lt;button (click)=&quot;counter.increment()&quot;&gt;+&lt;/button&gt;
+  `
+})
+export class CounterComponent {
+  counter = inject(CounterService);
+}</pre>
+          </div>
+
+          <div class="state-card glass-card animate-on-scroll">
+            <div class="state-card__header">
+              <div class="state-card__icon">&#x1F3EA;</div>
+              <div>
+                <div class="state-card__title">NgRx Store <span class="state-card__badge badge--ngrx">Large Apps</span></div>
+                <div class="state-card__subtitle">@ngrx/store &middot; Redux pattern &middot; Devtools support</div>
+              </div>
+            </div>
+            <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:12px;">Predictable, immutable state container with time-travel debugging. Ideal for complex, cross-feature state shared by many components with side effects.</p>
+            <pre class="code-block">// counter.actions.ts
+export const increment = createAction(&#39;[Counter] Increment&#39;);
+export const decrement = createAction(&#39;[Counter] Decrement&#39;);
+
+// counter.reducer.ts
+export const counterReducer = createReducer(
+  { count: 0 },
+  on(increment, state =&gt; ({ ...state, count: state.count + 1 })),
+  on(decrement, state =&gt; ({ ...state, count: state.count - 1 }))
+);
+
+// component.ts
+@Component({ standalone: true, imports: [AsyncPipe] })
+export class CounterComponent {
+  private store = inject(Store);
+  count$ = this.store.select(selectCount);
+
+  increment() { this.store.dispatch(increment()); }
+}</pre>
+          </div>
+
+          <div class="state-card glass-card animate-on-scroll">
+            <div class="state-card__header">
+              <div class="state-card__icon">&#x1F4CB;</div>
+              <div>
+                <div class="state-card__title">Service + Observables <span class="state-card__badge badge--service">Classic</span></div>
+                <div class="state-card__subtitle">BehaviorSubject &middot; RxJS &middot; Medium apps</div>
+              </div>
+            </div>
+            <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:12px;">A proven pattern using BehaviorSubject for state and exposing observables. Still valid for teams familiar with RxJS, though Signals are the modern replacement.</p>
+            <pre class="code-block">// auth.service.ts (classic BehaviorSubject pattern)
+@Injectable({ providedIn: &#39;root&#39; })
+export class AuthService {
+  private http = inject(HttpClient);
+  private userSubject = new BehaviorSubject&lt;User | null&gt;(null);
+
+  user$ = this.userSubject.asObservable();
+  isLoggedIn$ = this.user$.pipe(map(u =&gt; u !== null));
+
+  login(email: string, pass: string): Observable&lt;User&gt; {
+    return this.http.post&lt;User&gt;(&#39;/api/login&#39;, { email, pass }).pipe(
+      tap(user =&gt; this.userSubject.next(user))
+    );
+  }
+
+  logout() { this.userSubject.next(null); }
+}</pre>
+          </div>
+
+          <div class="state-card glass-card animate-on-scroll">
+            <div class="state-card__header">
+              <div class="state-card__icon">&#x1F527;</div>
+              <div>
+                <div class="state-card__title">When to Choose What</div>
+                <div class="state-card__subtitle">Decision guide</div>
+              </div>
+            </div>
+            <ul style="list-style:none;font-size:0.87rem;">
+              <li style="padding:8px 0;border-bottom:1px solid var(--border-color);">&#x1F7E2; <strong>Signals</strong> &mdash; Local UI state, small apps, component-level reactivity</li>
+              <li style="padding:8px 0;border-bottom:1px solid var(--border-color);">&#x1F535; <strong>Service+Signals</strong> &mdash; Shared state across a few components, medium apps</li>
+              <li style="padding:8px 0;border-bottom:1px solid var(--border-color);">&#x1F7E0; <strong>NgRx</strong> &mdash; Complex state, many features, need DevTools &amp; time-travel debug</li>
+              <li style="padding:8px 0;">&#x1F534; <strong>NgRx+Nx</strong> &mdash; Multiple apps sharing state, enterprise monorepo, team isolation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="testing">
+      <div class="container">
+        <div class="section__header animate-on-scroll">
+          <h2 class="section__title">Testing Strategy</h2>
+          <p class="section__subtitle">A three-layer testing pyramid: unit tests for logic, integration for wiring, E2E for user journeys.</p>
+        </div>
+        <div class="testing-grid">
+          <div class="test-card glass-card animate-on-scroll">
+            <div class="test-card__icon">&#x1F9EA;</div>
+            <div class="test-card__title">Unit Testing <span class="test-pill pill--unit">Jasmine / Jest</span></div>
+            <p class="test-card__desc">Test services, pipes, and utilities in isolation. Use <code>TestBed</code> for Angular-specific DI. Aim for 70%+ coverage on business logic.</p>
+            <pre class="code-block">describe(&#39;AuthService&#39;, () =&gt; {
+  let service: AuthService;
+
+  beforeEach(() =&gt; {
+    TestBed.configureTestingModule({
+      providers: [
+        AuthService,
+        provideHttpClientTesting()
+      ]
+    });
+    service = TestBed.inject(AuthService);
+  });
+
+  it(&#39;should return user on login&#39;, fakeAsync(() =&gt; {
+    const mockUser = { id: 1, name: &#39;Test&#39; };
+    service.login(&#39;u&#39;, &#39;p&#39;).subscribe(u =&gt; {
+      expect(u).toEqual(mockUser);
+    });
+    TestBed.inject(HttpTestingController)
+      .expectOne(&#39;/api/login&#39;).flush(mockUser);
+    tick();
+  }));
+});</pre>
+          </div>
+
+          <div class="test-card glass-card animate-on-scroll">
+            <div class="test-card__icon">&#x1F527;</div>
+            <div class="test-card__title">Component Testing <span class="test-pill pill--integration">Component Harness</span></div>
+            <p class="test-card__desc">Test components with Angular&#39;s <code>TestBed</code> and component harnesses. Verify rendering, inputs, outputs, and user interactions.</p>
+            <pre class="code-block">describe(&#39;ButtonComponent&#39;, () =&gt; {
+  let fixture: ComponentFixture&lt;ButtonComponent&gt;;
+  let loader: HarnessLoader;
+
+  beforeEach(async () =&gt; {
+    await TestBed.configureTestingModule({
+      imports: [ButtonComponent]
+    }).compileComponents();
+    fixture = TestBed.createComponent(ButtonComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
+  });
+
+  it(&#39;should emit click&#39;, async () =&gt; {
+    let clicked = false;
+    fixture.componentInstance.clicked.subscribe(() =&gt; clicked = true);
+    const btn = await loader.getHarness(MatButtonHarness);
+    await btn.click();
+    expect(clicked).toBe(true);
+  });
+});</pre>
+          </div>
+
+          <div class="test-card glass-card animate-on-scroll">
+            <div class="test-card__icon">&#x1F3AC;</div>
+            <div class="test-card__title">E2E Testing <span class="test-pill pill--e2e">Playwright</span></div>
+            <p class="test-card__desc">Simulate real user journeys in a browser. Use <code>data-testid</code> attributes for stable selectors that survive refactoring.</p>
+            <pre class="code-block">// login.spec.ts (Playwright)
+test(&#39;user can login and see dashboard&#39;, async ({ page }) =&gt; {
+  await page.goto(&#39;/login&#39;);
+
+  await page.fill(&#39;[data-testid=email]&#39;, &#39;user@example.com&#39;);
+  await page.fill(&#39;[data-testid=password]&#39;, &#39;password123&#39;);
+  await page.click(&#39;[data-testid=submit]&#39;);
+
+  await expect(page).toHaveURL(&#39;/dashboard&#39;);
+  await expect(page.locator(&#39;h1&#39;))
+    .toContainText(&#39;Dashboard&#39;);
+});</pre>
+          </div>
+
+          <div class="test-card glass-card animate-on-scroll">
+            <div class="test-card__icon">&#x1F4CA;</div>
+            <div class="test-card__title">Testing Pyramid</div>
+            <p class="test-card__desc">The optimal mix for Angular applications:</p>
+            <ul style="list-style:none;font-size:0.87rem;">
+              <li style="padding:8px 0;border-bottom:1px solid var(--border-color);">&#x1F7E2; <strong>70% Unit</strong> &mdash; Services, pipes, utilities, reducers</li>
+              <li style="padding:8px 0;border-bottom:1px solid var(--border-color);">&#x1F535; <strong>20% Integration</strong> &mdash; Components with TestBed, routing</li>
+              <li style="padding:8px 0;">&#x1F534; <strong>10% E2E</strong> &mdash; Critical user journeys only</li>
+            </ul>
+            <div style="margin-top:14px;padding:12px;background:var(--accent-bg);border-radius:var(--radius-md);font-size:0.82rem;color:var(--text-secondary);">
+              <strong style="color:var(--accent);">Tip:</strong> Always use <code>data-testid</code> attributes for E2E selectors. Avoid selecting by CSS classes or text content.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="performance">
+      <div class="container">
+        <div class="section__header animate-on-scroll">
+          <h2 class="section__title">Performance Tips</h2>
+          <p class="section__subtitle">Practical techniques for fast, efficient Angular 17+ applications.</p>
+        </div>
+        <div class="perf-grid">
+          <div class="perf-card glass-card animate-on-scroll">
+            <div class="perf-card__icon">&#x26A1;</div>
+            <h3 class="perf-card__title">OnPush + Signals</h3>
+            <p class="perf-card__desc">Use <code>ChangeDetectionStrategy.OnPush</code> on all components. With signals, Angular automatically tracks dependencies &mdash; only rerenders what changed.</p>
+            <pre class="code-block">@Component({
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    @for (item of items(); track item.id) {
+      &lt;app-item [data]=&quot;item&quot; /&gt;
+    }
+  `
+})
+export class ListComponent {
+  private svc = inject(DataService);
+  items = this.svc.items; // Signal&lt;Item[]&gt;
+}</pre>
+          </div>
+
+          <div class="perf-card glass-card animate-on-scroll">
+            <div class="perf-card__icon">&#x1F4E6;</div>
+            <h3 class="perf-card__title">Lazy Loading</h3>
+            <p class="perf-card__desc">Every feature should be lazy-loaded. Use <code>loadComponent()</code> for single components or <code>loadChildren()</code> for feature route groups.</p>
+            <pre class="code-block">// app.routes.ts
+export const routes: Routes = [
+  {
+    path: &#39;dashboard&#39;,
+    loadComponent: () =&gt;
+      import(&#39;./features/dashboard/dashboard.component&#39;)
+        .then(m =&gt; m.DashboardComponent)
+  },
+  {
+    path: &#39;users&#39;,
+    loadChildren: () =&gt;
+      import(&#39;./features/users/users.routes&#39;)
+        .then(m =&gt; m.USERS_ROUTES)
+  }
+];</pre>
+          </div>
+
+          <div class="perf-card glass-card animate-on-scroll">
+            <div class="perf-card__icon">&#x1F4CA;</div>
+            <h3 class="perf-card__title">track in @for</h3>
+            <p class="perf-card__desc">The new <code>@for</code> control flow requires a <code>track</code> expression. Angular uses it to minimize DOM operations. Always track by a unique identifier.</p>
+            <pre class="code-block">@for (user of users(); track user.id) {
+  &lt;app-user-card [user]=&quot;user&quot; /&gt;
+}
+
+@for (tag of tags(); track tag) {
+  &lt;span class=&quot;tag&quot;&gt;{{ tag }}&lt;/span&gt;
+}
+
+@for (item of items(); track item.id; let i = $index) {
+  &lt;li&gt;{{ i + 1 }}. {{ item.name }}&lt;/li&gt;
+}</pre>
+          </div>
+
+          <div class="perf-card glass-card animate-on-scroll">
+            <div class="perf-card__icon">&#x1F4B0;</div>
+            <h3 class="perf-card__title">Bundle Optimization</h3>
+            <p class="perf-card__desc">Reduce initial bundle size with these build-time strategies.</p>
+            <ul style="list-style:none;font-size:0.87rem;">
+              <li style="padding:6px 0;border-bottom:1px solid var(--border-color);">&#x2705; Use <code>ng build --configuration production</code></li>
+              <li style="padding:6px 0;border-bottom:1px solid var(--border-color);">&#x2705; Enable <code>esbuild</code> builder (default in Angular 17)</li>
+              <li style="padding:6px 0;border-bottom:1px solid var(--border-color);">&#x2705; Analyze bundle: <code>ng build --stats-json</code></li>
+              <li style="padding:6px 0;border-bottom:1px solid var(--border-color);">&#x2705; Avoid barrel imports from large libraries</li>
+              <li style="padding:6px 0;">&#x2705; Use image optimization with <code>NgOptimizedImage</code></li>
+            </ul>
+          </div>
+
+          <div class="perf-card glass-card animate-on-scroll">
+            <div class="perf-card__icon">&#x1F504;</div>
+            <h3 class="perf-card__title">Defer Blocks</h3>
+            <p class="perf-card__desc">Angular 17&#39;s <code>@defer</code> enables fine-grained lazy loading of template sections, improving LCP and reducing TTI.</p>
+@defer (on viewport) {
+  &lt;app-heavy-chart [data]=&quot;chartData&quot; /&gt;
+} @placeholder {
+  &lt;div class=&quot;chart-skeleton&quot;&gt;&lt;/div&gt;
+} @loading (minimum 300ms) {
+  &lt;app-spinner /&gt;
+}</pre>
+          </div>
+
+          <div class="perf-card glass-card animate-on-scroll">
+            <div class="perf-card__icon">&#x1F5BC;&#xFE0F;</div>
+            <h3 class="perf-card__title">Image Optimization</h3>
+            <p class="perf-card__desc">Use Angular&#39;s built-in <code>NgOptimizedImage</code> directive for automatic lazy loading, responsive sizes, and Core Web Vitals improvements.</p>
+            <pre class="code-block">@Component({
+  standalone: true,
+  imports: [NgOptimizedImage],
+  template: `
+    &lt;img ngSrc=&quot;hero.jpg&quot; width=&quot;800&quot;
+         height=&quot;400&quot; priority /&gt;
+
+    &lt;img ngSrc=&quot;photo.jpg&quot; width=&quot;400&quot;
+         height=&quot;300&quot; loading=&quot;lazy&quot; /&gt;
+  `
+})
+export class HeroComponent {}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="anti-patterns">
+      <div class="container">
+        <div class="section__header animate-on-scroll">
+          <h2 class="section__title">Common Anti-patterns</h2>
+          <p class="section__subtitle">Mistakes to avoid &mdash; and the Angular 17+ idiomatic alternatives.</p>
+        </div>
+        <div class="anti-grid">
+
+          <div class="anti-card glass-card animate-on-scroll">
+            <div class="anti-card__header">
+              <h4 class="anti-card__title">1. Manual Subscription in Template</h4>
+            </div>
+            <div class="anti-pair">
+              <div class="anti-bad">
+                <div class="anti-bad__label">&#x274C; Don&#39;t</div>
+                <pre>// Subscribing in component
+// then binding local variable
+ngOnInit() {
+  this.data$.subscribe(
+    d =&gt; this.data = d
+  );
+}</pre>
+              </div>
+              <div class="anti-good">
+                <div class="anti-good__label">&#x2705; Do</div>
+                <pre>// Use async pipe or signals
+data$ = this.svc.data$;
+// template:
+// *ngIf=&quot;data$ | async as data&quot;
+// Or: data = toSignal(data$);</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="anti-card glass-card animate-on-scroll">
+            <div class="anti-card__header">
+              <h4 class="anti-card__title">2. Logic in Constructor</h4>
+            </div>
+            <div class="anti-pair">
+              <div class="anti-bad">
+                <div class="anti-bad__label">&#x274C; Don&#39;t</div>
+                <pre>constructor(
+  private svc: UserService
+) {
+  // Side effects in ctor!
+  this.svc.loadUsers();
+  this.initForm();
+}</pre>
+              </div>
+              <div class="anti-good">
+                <div class="anti-good__label">&#x2705; Do</div>
+                <pre>private svc = inject(UserService);
+
+ngOnInit() {
+  // Side effects in ngOnInit
+  this.svc.loadUsers();
+  this.initForm();
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="anti-card glass-card animate-on-scroll">
+            <div class="anti-card__header">
+              <h4 class="anti-card__title">3. Memory Leaks — Unmanaged Subscriptions</h4>
+            </div>
+            <div class="anti-pair">
+              <div class="anti-bad">
+                <div class="anti-bad__label">&#x274C; Don&#39;t</div>
+                <pre>ngOnInit() {
+  // Never unsubscribed!
+  this.svc.data$.subscribe(
+    data =&gt; this.data = data
+  );
+}</pre>
+              </div>
+              <div class="anti-good">
+                <div class="anti-good__label">&#x2705; Do</div>
+                <pre>data$ = this.svc.data$
+  .pipe(takeUntilDestroyed());
+// Or use async pipe
+// Or convert to signal:
+data = toSignal(this.svc.data$);</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="anti-card glass-card animate-on-scroll">
+            <div class="anti-card__header">
+              <h4 class="anti-card__title">4. Overusing <code>any</code></h4>
+            </div>
+            <div class="anti-pair">
+              <div class="anti-bad">
+                <div class="anti-bad__label">&#x274C; Don&#39;t</div>
+                <pre>// Loses all type safety
+processData(data: any) {
+  this.user = data.user;
+  this.count = data.count;
+}</pre>
+              </div>
+              <div class="anti-good">
+                <div class="anti-good__label">&#x2705; Do</div>
+                <pre>interface ApiData {
+  user: User;
+  count: number;
+}
+processData(data: ApiData) {
+  this.user = data.user;
+  this.count = data.count;
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="anti-card glass-card animate-on-scroll">
+            <div class="anti-card__header">
+              <h4 class="anti-card__title">5. Direct DOM Manipulation</h4>
+            </div>
+            <div class="anti-pair">
+              <div class="anti-bad">
+                <div class="anti-bad__label">&#x274C; Don&#39;t</div>
+                <pre>// Bypasses Angular &amp; SSR
+document.getElementById(&#39;btn&#39;)
+  ?.classList.add(&#39;active&#39;);
+element.nativeElement
+  .style.color = &#39;red&#39;;</pre>
+              </div>
+              <div class="anti-good">
+                <div class="anti-good__label">&#x2705; Do</div>
+                <pre>// Use Angular bindings
+isActive = signal(false);
+// template:
+// [class.active]=&quot;isActive()&quot;
+// Or Renderer2 for dynamic:
+this.renderer.addClass(
+  el, &#39;active&#39;);</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="anti-card glass-card animate-on-scroll">
+            <div class="anti-card__header">
+              <h4 class="anti-card__title">6. Fat Components</h4>
+            </div>
+            <div class="anti-pair">
+              <div class="anti-bad">
+                <div class="anti-bad__label">&#x274C; Don&#39;t</div>
+                <pre>// Component does everything
+export class UserListComponent {
+  users: User[] = [];
+  // HTTP calls in component
+  // Sorting, filtering logic
+  // Form validation logic
+  // ...</pre>
+              </div>
+              <div class="anti-good">
+                <div class="anti-good__label">&#x2705; Do</div>
+                <pre>// Thin component + service
+export class UserListComponent {
+  private svc = inject(UserService);
+  users = this.svc.users; // signal
+  // Component only handles UI
+  // All logic in service
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="anti-card glass-card animate-on-scroll">
+            <div class="anti-card__header">
+              <h4 class="anti-card__title">7. Nested Subscriptions (Callback Hell)</h4>
+            </div>
+            <div class="anti-pair">
+              <div class="anti-bad">
+                <div class="anti-bad__label">&#x274C; Don&#39;t</div>
+                <pre>this.auth$.subscribe(user =&gt; {
+  this.userSvc.get(user.id)
+    .subscribe(profile =&gt; {
+      this.posts$.subscribe(...)
+    });
+});</pre>
+              </div>
+              <div class="anti-good">
+                <div class="anti-good__label">&#x2705; Do</div>
+                <pre>this.auth$.pipe(
+  switchMap(user =&gt;
+    this.userSvc.get(user.id)),
+  switchMap(profile =&gt;
+    this.getPosts(profile.id))
+).subscribe(posts =&gt; ...);</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="anti-card glass-card animate-on-scroll">
+            <div class="anti-card__header">
+              <h4 class="anti-card__title">8. Default Change Detection</h4>
+            </div>
+            <div class="anti-pair">
+              <div class="anti-bad">
+                <div class="anti-bad__label">&#x274C; Don&#39;t</div>
+                <pre>// No strategy specified
+// Angular checks ALL components
+// on every event &amp; async op
+@Component({
+  standalone: true,
+  template: `...`
+})
+export class ItemComponent {}</pre>
+              </div>
+              <div class="anti-good">
+                <div class="anti-good__label">&#x2705; Do</div>
+                <pre>@Component({
+  standalone: true,
+  changeDetection:
+    ChangeDetectionStrategy.OnPush,
+  template: `...`
+})
+export class ItemComponent {
+  // Use signals or immutable data
+}</pre>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="migration">
+      <div class="container">
+        <div class="section__header animate-on-scroll">
+          <h2 class="section__title">Migration Guide</h2>
+          <p class="section__subtitle">Step-by-step migration paths to Angular 17+ modern patterns.</p>
+        </div>
+        <div class="migration-steps">
+
+          <div class="migration-step glass-card animate-on-scroll">
+            <div class="migration-step__header">
+              <div class="migration-step__num">1</div>
+              <div class="migration-step__title">NgModules &#x2192; Standalone Components</div>
+            </div>
+            <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:14px;">Run the built-in migration schematic: <code>ng generate @angular/core:standalone</code>. Then convert <code>AppModule</code> to use <code>bootstrapApplication</code>.</p>
+            <div class="migration-before-after">
+              <div class="migration-before">
+                <div class="migration-before__label">BEFORE (NgModule)</div>
+                <pre>// app.module.ts
+@NgModule({
+  declarations: [
+    AppComponent,
+    HomeComponent
+  ],
+  imports: [
+    BrowserModule,
+    RouterModule.forRoot(routes)
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+
+// main.ts
+platformBrowserDynamic()
+  .bootstrapModule(AppModule);</pre>
+              </div>
+              <div class="migration-after">
+                <div class="migration-after__label">AFTER (Standalone)</div>
+                <pre>// main.ts
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    )
+  ]
+});
+
+// app.component.ts
+@Component({
+  standalone: true,
+  imports: [RouterOutlet],
+  template: `&lt;router-outlet /&gt;`
+})
+export class AppComponent {}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="migration-step glass-card animate-on-scroll">
+            <div class="migration-step__header">
+              <div class="migration-step__num">2</div>
+              <div class="migration-step__title">*ngIf / *ngFor &#x2192; @if / @for</div>
+            </div>
+            <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:14px;">Run the built-in migration: <code>ng generate @angular/core:control-flow</code>. New syntax is more readable and doesn&#39;t need <code>CommonModule</code>.</p>
+            <div class="migration-before-after">
+              <div class="migration-before">
+                <div class="migration-before__label">BEFORE (*ngIf / *ngFor)</div>
+                <pre>&lt;div *ngIf=&quot;user; else loading&quot;&gt;
+  {{ user.name }}
+&lt;/div&gt;
+&lt;ng-template #loading&gt;
+  Loading...
+&lt;/ng-template&gt;
+
+&lt;div *ngFor=&quot;let item of items;
+     trackBy: trackById&quot;&gt;
+  {{ item.name }}
+&lt;/div&gt;
+
+&lt;div [ngSwitch]=&quot;status&quot;&gt;
+  &lt;span *ngSwitchCase=&quot;&#39;active&#39;&quot;&gt;
+    Active&lt;/span&gt;
+  &lt;span *ngSwitchDefault&gt;
+    Inactive&lt;/span&gt;
+&lt;/div&gt;</pre>
+              </div>
+              <div class="migration-after">
+                <div class="migration-after__label">AFTER (@if / @for / @switch)</div>
+                <pre>@if (user) {
+  &lt;div&gt;{{ user.name }}&lt;/div&gt;
+} @else {
+  &lt;div&gt;Loading...&lt;/div&gt;
+}
+
+@for (item of items; track item.id) {
+  &lt;div&gt;{{ item.name }}&lt;/div&gt;
+} @empty {
+  &lt;p&gt;No items found.&lt;/p&gt;
+}
+
+@switch (status) {
+  @case (&#39;active&#39;) { &lt;span&gt;Active&lt;/span&gt; }
+  @default { &lt;span&gt;Inactive&lt;/span&gt; }
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="migration-step glass-card animate-on-scroll">
+            <div class="migration-step__header">
+              <div class="migration-step__num">3</div>
+              <div class="migration-step__title">BehaviorSubject &#x2192; Signals</div>
+            </div>
+            <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:14px;">Replace <code>BehaviorSubject</code> state in services with <code>signal()</code>. Use <code>toSignal()</code> as a bridge for existing observables.</p>
+            <div class="migration-before-after">
+              <div class="migration-before">
+                <div class="migration-before__label">BEFORE (BehaviorSubject)</div>
+                <pre>@Injectable({ providedIn: &#39;root&#39; })
+export class AuthService {
+  private userSubject =
+    new BehaviorSubject&lt;User | null&gt;(null);
+
+  user$ = this.userSubject.asObservable();
+
+  isLoggedIn$ = this.user$.pipe(
+    map(u =&gt; u !== null)
+  );
+
+  setUser(user: User) {
+    this.userSubject.next(user);
+  }
+
+  logout() {
+    this.userSubject.next(null);
+  }
+}</pre>
+              </div>
+              <div class="migration-after">
+                <div class="migration-after__label">AFTER (Signals)</div>
+                <pre>@Injectable({ providedIn: &#39;root&#39; })
+export class AuthService {
+  private userSignal =
+    signal&lt;User | null&gt;(null);
+
+  user = this.userSignal.asReadonly();
+
+  isLoggedIn = computed(
+    () =&gt; this.userSignal() !== null
+  );
+
+  setUser(user: User) {
+    this.userSignal.set(user);
+  }
+
+  logout() {
+    this.userSignal.set(null);
+  }
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="migration-step glass-card animate-on-scroll">
+            <div class="migration-step__header">
+              <div class="migration-step__num">4</div>
+              <div class="migration-step__title">Constructor Injection &#x2192; <code>inject()</code></div>
+            </div>
+            <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:14px;">The <code>inject()</code> function is the modern approach &mdash; works in constructors, factory functions, guards, and interceptors.</p>
+            <div class="migration-before-after">
+              <div class="migration-before">
+                <div class="migration-before__label">BEFORE (Constructor DI)</div>
+                <pre>@Component({ standalone: true })
+export class UserListComponent
+  implements OnInit {
+
+  users: User[] = [];
+
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private store: Store
+  ) {}
+
+  ngOnInit() {
+    this.userService.getUsers()
+      .subscribe(u =&gt; this.users = u);
+  }
+}</pre>
+              </div>
+              <div class="migration-after">
+                <div class="migration-after__label">AFTER (inject() function)</div>
+                <pre>@Component({ standalone: true })
+export class UserListComponent
+  implements OnInit {
+
+  private userService = inject(UserService);
+  private router = inject(Router);
+  private store = inject(Store);
+
+  users = signal&lt;User[]&gt;([]);
+
+  ngOnInit() {
+    this.userService.getUsers()
+      .pipe(takeUntilDestroyed())
+      .subscribe(u =&gt; this.users.set(u));
+  }
+}</pre>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="cheatsheet">
+      <div class="container">
+        <div class="section__header animate-on-scroll">
           <h2 class="section__title">Quick Reference Cheat Sheet</h2>
-          <p class="section__subtitle">Essential Angular CLI commands and quick tips.</p>
+          <p class="section__subtitle">Essential Angular CLI commands. Hover a card to copy. <span class="kbd-hint">Click copy button</span></p>
         </div>
         <div class="cheat-grid">
-          <div class="cheat-card glass-card">
-            <h4 class="cheat-card__title">🚀 Generate Components</h4>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x1F680; Generate Components</h4>
             <pre class="cheat-card__code"><code>ng g c features/auth/pages/login
 ng g c shared/components/button
-ng g c layout/header</code></pre>
+ng g c layout/header
+ng g c core/layout/sidebar</code></pre>
           </div>
-          <div class="cheat-card glass-card">
-            <h4 class="cheat-card__title">⚙️ Generate Services</h4>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x2699;&#xFE0F; Generate Services</h4>
             <pre class="cheat-card__code"><code>ng g s core/services/auth
-ng g s features/users/services/users-api</code></pre>
+ng g s features/users/services/users-api
+ng g s core/services/notification</code></pre>
           </div>
-          <div class="cheat-card glass-card">
-            <h4 class="cheat-card__title">🛡️ Generate Guards</h4>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x1F6E1;&#xFE0F; Generate Guards</h4>
             <pre class="cheat-card__code"><code>ng g guard core/guards/auth
-ng g guard core/guards/role</code></pre>
+ng g guard core/guards/role
+# Angular 17: generates CanActivateFn</code></pre>
           </div>
-          <div class="cheat-card glass-card">
-            <h4 class="cheat-card__title">🔌 Generate Interceptors</h4>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x1F50C; Generate Interceptors</h4>
             <pre class="cheat-card__code"><code>ng g interceptor core/interceptors/auth
-ng g interceptor core/interceptors/error</code></pre>
+ng g interceptor core/interceptors/error
+# Generates HttpInterceptorFn</code></pre>
           </div>
-          <div class="cheat-card glass-card">
-            <h4 class="cheat-card__title">🔧 Generate Pipes</h4>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x1F504; Generate Resolver</h4>
+            <pre class="cheat-card__code"><code>ng g resolver features/users/resolvers/user
+# Generates ResolveFn&lt;T&gt; function</code></pre>
+          </div>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x1F527; Generate Pipes &amp; Directives</h4>
             <pre class="cheat-card__code"><code>ng g pipe shared/pipes/truncate
-ng g pipe shared/pipes/time-ago</code></pre>
+ng g pipe shared/pipes/time-ago
+ng g directive shared/directives/highlight</code></pre>
           </div>
-          <div class="cheat-card glass-card">
-            <h4 class="cheat-card__title">📌 Generate Directives</h4>
-            <pre class="cheat-card__code"><code>ng g directive shared/directives/highlight
-ng g directive shared/directives/tooltip</code></pre>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x1F6E0;&#xFE0F; Build &amp; Serve</h4>
+            <pre class="cheat-card__code"><code>ng serve --open
+ng build
+ng build --configuration production
+ng build --stats-json</code></pre>
           </div>
-          <div class="cheat-card glass-card">
-            <h4 class="cheat-card__title">📁 Recommended Structure</h4>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x1F9EA; Test &amp; Lint</h4>
+            <pre class="cheat-card__code"><code>ng test
+ng test --no-watch --code-coverage
+ng lint
+ng e2e</code></pre>
+          </div>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x1F4E6; Add &amp; Update</h4>
+            <pre class="cheat-card__code"><code>ng add @ngrx/store
+ng add @angular/pwa
+ng update @angular/core @angular/cli
+ng update --all</code></pre>
+          </div>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x1F504; Migrate to Modern</h4>
+            <pre class="cheat-card__code"><code>ng generate @angular/core:standalone
+ng generate @angular/core:control-flow
+ng generate @angular/core:inject
+ng generate @angular/core:route-lazy-loading</code></pre>
+          </div>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x1F4C1; Recommended Structure</h4>
             <pre class="cheat-card__code"><code>src/app/
-├── core/       ← singletons
-├── shared/     ← reusables
-├── features/   ← lazy modules
-└── layout/     ← shell UI</code></pre>
+&#x251C;&#x2500;&#x2500; core/       &#x2190; singletons
+&#x251C;&#x2500;&#x2500; shared/     &#x2190; reusables
+&#x251C;&#x2500;&#x2500; features/   &#x2190; lazy modules
+&#x2514;&#x2500;&#x2500; layout/     &#x2190; shell UI</code></pre>
           </div>
-          <div class="cheat-card glass-card">
-            <h4 class="cheat-card__title">💡 Tips</h4>
+          <div class="cheat-card glass-card animate-on-scroll">
+            <h4 class="cheat-card__title">&#x1F4A1; Angular 17+ Tips</h4>
             <ul class="cheat-card__list">
-              <li>Use standalone components (Angular 15+)</li>
-              <li>Barrel exports via <code>index.ts</code></li>
-              <li>Environment configs for API URLs</li>
+              <li>All components <code>standalone: true</code></li>
+              <li>Use <code>inject()</code> over constructor DI</li>
+              <li>Prefer <code>signal()</code> for reactive state</li>
+              <li>Use <code>@if</code>/<code>@for</code> control flow</li>
+              <li>Add <code>OnPush</code> to all components</li>
               <li>Prefix components: <code>app-</code></li>
             </ul>
           </div>
@@ -352,24 +1201,24 @@ ng g directive shared/directives/tooltip</code></pre>
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container footer__inner">
       <div class="footer__brand">
-        <span class="nav__logo-icon">📐</span>
+        <span class="nav__logo-icon">&#x1F4D0;</span>
         <span class="nav__logo-text">Angular<span class="accent">BP</span></span>
       </div>
-      <p class="footer__text">Built with ❤️ for the Angular community. Vanilla HTML, CSS &amp; JS — no frameworks needed.</p>
+      <p class="footer__text">Built with &#x2764;&#xFE0F; for the Angular community. Vanilla HTML, CSS &amp; JS &mdash; no frameworks needed.</p>
       <div class="footer__links">
         <a href="https://angular.dev" target="_blank" rel="noopener noreferrer">Angular Docs</a>
+        <a href="https://ngrx.io" target="_blank" rel="noopener noreferrer">NgRx</a>
         <a href="https://github.com/Omaizer21" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
-      <p class="footer__copy">&copy; 2024 Omaizer21. Open source under MIT License.</p>
+      <p class="footer__copy">&copy; 2024 Omaizer21. Open source under MIT License. Press <span class="kbd-hint">/</span> to search.</p>
     </div>
   </footer>
 
-  <!-- Toast notification -->
   <div class="toast" id="toast"></div>
+  <button id="backToTop" class="back-to-top" aria-label="Back to top">&#x2191;</button>
 
   <script src="script.js"></script>
 </body>
