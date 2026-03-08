@@ -371,6 +371,125 @@ export const appConfig: ApplicationConfig = {
           <p class="subsection-note">&#x2139;&#xFE0F; In modern Angular, any service with <code>providedIn: &#39;root&#39;</code> is automatically a singleton. The framework handles it &mdash; no <code>forRoot()</code>, no <code>CoreModule</code> needed.</p>
         </div>
 
+        <!-- SharedModule old vs. new comparison -->
+        <div class="glass-card animate-on-scroll mt-section">
+          <h3 class="subsection-title">&#x1F4E6; SharedModule &mdash; Old vs. New</h3>
+          <p class="subsection-intro">The old <code>SharedModule</code> was a "barrel module" that pulled in <strong>everything at once</strong> &mdash; even components you didn&rsquo;t use. Modern standalone components let you cherry-pick only what you need.</p>
+          <div class="anti-pair">
+            <div class="anti-bad">
+              <div class="code-label">&#x274C; Old NgModule Way (pre-v17)</div>
+              <pre class="code-block">// shared.module.ts — barrel module
+@NgModule({
+  declarations: [
+    ButtonComponent,
+    ModalComponent,
+    SpinnerComponent,
+    TruncatePipe,
+    DateFormatPipe
+  ],
+  imports: [CommonModule, FormsModule],
+  exports: [
+    // Must re-export EVERYTHING
+    ButtonComponent, ModalComponent,
+    SpinnerComponent, TruncatePipe,
+    DateFormatPipe, CommonModule, FormsModule
+  ]
+})
+export class SharedModule {}
+
+// feature.module.ts
+@NgModule({
+  imports: [SharedModule] // pulls in ALL of shared!
+})
+export class DashboardModule {}</pre>
+            </div>
+            <div class="anti-good">
+              <div class="code-label">&#x2705; Modern Standalone Way (v17+/v20+) &mdash; PREFERRED</div>
+              <pre class="code-block">// shared/button/button.ts — self-contained
+@Component({
+  selector: 'app-button',
+  // standalone: true is DEFAULT since Angular 19
+  imports: [],
+  template: `&lt;button [class]="variant()"&gt;
+    &lt;ng-content /&gt;
+  &lt;/button&gt;`
+})
+export class ButtonComponent {
+  variant = input&lt;'primary'|'secondary'&gt;('primary');
+}
+
+// features/dashboard/dashboard-home.ts
+@Component({
+  imports: [ButtonComponent, TruncatePipe], // ← cherry-pick!
+  template: `
+    &lt;app-button variant="primary"&gt;Save&lt;/app-button&gt;
+    &lt;p&gt;{{ desc | truncate:100 }}&lt;/p&gt;
+  `
+})
+export class DashboardHome {}</pre>
+            </div>
+          </div>
+          <p class="subsection-note">&#x2139;&#xFE0F; No <code>SharedModule</code> class needed &mdash; each component imports <strong>only what it uses</strong>, giving the bundler a perfect dependency graph for tree-shaking. <code>standalone: true</code> is the default since Angular 19.</p>
+        </div>
+
+        <!-- NgModule vs. Standalone quick summary table -->
+        <div class="animate-on-scroll mt-section">
+          <h3 class="subsection-title">&#x1F4CA; NgModule vs. Standalone &mdash; Quick Comparison</h3>
+          <div class="comparison-table-wrap">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>Aspect</th>
+                  <th>Old NgModule Way</th>
+                  <th>Modern Standalone Way (v17+)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Core services</td>
+                  <td><code>CoreModule</code> + <code>forRoot()</code> + constructor guard</td>
+                  <td><code>providedIn: 'root'</code> &mdash; automatic singleton</td>
+                </tr>
+                <tr>
+                  <td>Shared UI</td>
+                  <td><code>SharedModule</code> barrel &mdash; all-or-nothing import</td>
+                  <td>Direct imports &mdash; cherry-pick per component</td>
+                </tr>
+                <tr>
+                  <td>Guards</td>
+                  <td>Class-based <code>@Injectable()</code> with <code>CanActivate</code> interface</td>
+                  <td>Functional <code>CanActivateFn</code> &mdash; just a function</td>
+                </tr>
+                <tr>
+                  <td>Interceptors</td>
+                  <td>Class-based <code>HttpInterceptor</code> + <code>HTTP_INTERCEPTORS</code> token</td>
+                  <td>Functional <code>HttpInterceptorFn</code> via <code>withInterceptors()</code></td>
+                </tr>
+                <tr>
+                  <td>Lazy loading</td>
+                  <td><code>loadChildren: () =&gt; import(…).then(m =&gt; m.FeatureModule)</code></td>
+                  <td><code>loadComponent()</code> or <code>loadChildren()</code> with routes array</td>
+                </tr>
+                <tr>
+                  <td>Bootstrapping</td>
+                  <td><code>platformBrowserDynamic().bootstrapModule(AppModule)</code></td>
+                  <td><code>bootstrapApplication(AppComponent, appConfig)</code></td>
+                </tr>
+                <tr>
+                  <td>Tree-shaking</td>
+                  <td>Poor &mdash; modules pull in everything declared</td>
+                  <td>Excellent &mdash; only imported components are bundled</td>
+                </tr>
+                <tr>
+                  <td><code>standalone: true</code></td>
+                  <td>Must be explicitly added</td>
+                  <td>Default since Angular 19</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- "Where Does This Go?" cheat sheet -->
         <div class="animate-on-scroll mt-section">
           <h3 class="subsection-title">&#x1F4CB; Where Does This Go? Cheat Sheet</h3>
@@ -1650,6 +1769,60 @@ shared/         &#x2190; flat, no type sub-dirs
 &#x2502;   &#x2514;&#x2500;&#x2500; button.ts
 &#x251C;&#x2500;&#x2500; highlight.ts   &#x2190; flat directive
 &#x2514;&#x2500;&#x2500; truncate-pipe.ts &#x2190; flat pipe</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="migration-step glass-card animate-on-scroll">
+            <div class="migration-step__header">
+              <div class="migration-step__num">7</div>
+              <div class="migration-step__title">SharedModule &#x2192; Direct Standalone Imports</div>
+            </div>
+            <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:14px;">Run <code>ng generate @angular/core:standalone</code> to convert components, then delete <code>SharedModule</code>. Update each component to import shared items directly in its <code>imports: [...]</code> array and remove any empty module files.</p>
+            <div class="migration-before-after">
+              <div class="migration-before">
+                <div class="migration-before__label">BEFORE (SharedModule barrel)</div>
+                <pre>// shared.module.ts
+@NgModule({
+  declarations: [
+    ButtonComponent,
+    ModalComponent,
+    TruncatePipe
+  ],
+  exports: [
+    ButtonComponent,
+    ModalComponent,
+    TruncatePipe,
+    CommonModule
+  ]
+})
+export class SharedModule {}
+
+// In every feature module:
+@NgModule({
+  imports: [SharedModule]
+})
+export class FeatureModule {}</pre>
+              </div>
+              <div class="migration-after">
+                <div class="migration-after__label">AFTER (Standalone — direct imports)</div>
+                <pre>// No SharedModule file needed!
+// Each component imports directly:
+@Component({
+  imports: [ButtonComponent, TruncatePipe],
+  template: `
+    &lt;app-button&gt;Save&lt;/app-button&gt;
+    &lt;p&gt;{{ desc | truncate }}&lt;/p&gt;
+  `
+})
+export class FeaturePage {}
+
+// Migration steps:
+// 1. ng generate @angular/core:standalone
+// 2. Delete SharedModule class
+// 3. Add shared items to each
+//    component's imports: [...]
+// 4. Delete empty module files</pre>
               </div>
             </div>
           </div>
