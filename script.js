@@ -20,10 +20,10 @@
     return {
       name: name, type: 'folder', desc: desc,
       children: [
-        f(name + '.component.ts', 'component', desc),
-        f(name + '.component.html', 'html', 'Template for the ' + name + ' component.'),
-        f(name + '.component.scss', 'style', 'Scoped SCSS styles for the ' + name + ' component.'),
-        f(name + '.component.spec.ts', 'spec', 'Unit tests for the ' + name + ' component.')
+        f(name + '.ts', 'component', desc),
+        f(name + '.html', 'html', 'Template for the ' + name + ' component.'),
+        f(name + '.scss', 'style', 'Scoped SCSS styles for the ' + name + ' component.'),
+        f(name + '.spec.ts', 'spec', 'Unit tests for the ' + name + ' component.')
       ]
     };
   }
@@ -48,23 +48,23 @@
           { name: 'app', type: 'folder',
             desc: 'Application root — root component, config, routes, and feature pages.',
             children: [
-              f('app.component.ts', 'component', 'Root standalone component — contains RouterOutlet.'),
-              f('app.component.html', 'html', 'Root template — <router-outlet />.'),
-              f('app.component.scss', 'style', 'Root component styles.'),
+              f('app.ts', 'component', 'Root component — contains RouterOutlet.'),
+              f('app.html', 'html', 'Root template — <router-outlet />.'),
+              f('app.scss', 'style', 'Root component styles.'),
               f('app.config.ts', 'config', 'Application config — provideRouter, provideHttpClient.'),
               f('app.routes.ts', 'routes', 'Root route definitions.'),
               { name: 'home', type: 'folder', desc: 'Home page feature.',
                 children: [
-                  f('home.component.ts', 'component', 'Home page standalone component.'),
-                  f('home.component.html', 'html', 'Home page template.'),
-                  f('home.component.scss', 'style', 'Home page styles.')
+                  f('home.ts', 'component', 'Home page component.'),
+                  f('home.html', 'html', 'Home page template.'),
+                  f('home.scss', 'style', 'Home page styles.')
                 ]
               },
               { name: 'about', type: 'folder', desc: 'About page feature.',
                 children: [
-                  f('about.component.ts', 'component', 'About page standalone component.'),
-                  f('about.component.html', 'html', 'About page template.'),
-                  f('about.component.scss', 'style', 'About page styles.')
+                  f('about.ts', 'component', 'About page component.'),
+                  f('about.html', 'html', 'About page template.'),
+                  f('about.scss', 'style', 'About page styles.')
                 ]
               }
             ]
@@ -135,10 +135,10 @@
             name: 'app', type: 'folder',
             desc: 'Main application directory — root component, config, routes, and all feature directories.',
             children: [
-              f('app.component.ts', 'component', 'Root standalone component — bootstraps the app, contains RouterOutlet.'),
-              f('app.component.html', 'html', 'Root template — <router-outlet /> to render routed views.'),
-              f('app.component.scss', 'style', 'Root component styles — global app shell styles.'),
-              f('app.component.spec.ts', 'spec', 'Root component unit tests.'),
+              f('app.ts', 'component', 'Root component — bootstraps the app, contains RouterOutlet.'),
+              f('app.html', 'html', 'Root template — <router-outlet /> to render routed views.'),
+              f('app.scss', 'style', 'Root component styles — global app shell styles.'),
+              f('app.spec.ts', 'spec', 'Root component unit tests.'),
               f('app.config.ts', 'config', 'Application configuration — provideRouter, provideHttpClient, interceptors.'),
               f('app.routes.ts', 'routes', 'Root route definitions — lazy-loads feature modules, applies guards.'),
               {
@@ -149,59 +149,59 @@
                     name: 'guards', type: 'folder',
                     desc: 'Functional route guards — control route access based on auth state.',
                     children: [
-                      f('auth.guard.ts', 'guard', 'Functional auth guard — prevents unauthenticated users from protected routes.'),
-                      f('role.guard.ts', 'guard', 'Functional role guard — restricts access based on user roles.'),
-                      f('no-auth.guard.ts', 'guard', 'No-auth guard — redirects authenticated users away from login page.')
+                      f('auth.ts', 'guard', 'Functional auth guard — prevents unauthenticated users from protected routes.'),
+                      f('role.ts', 'guard', 'Functional role guard — restricts access based on user roles.'),
+                      f('no-auth.ts', 'guard', 'No-auth guard — redirects authenticated users away from login page.')
                     ]
                   },
                   {
                     name: 'interceptors', type: 'folder',
                     desc: 'Functional HTTP interceptors — middleware for requests/responses.',
                     children: [
-                      f('auth.interceptor.ts', 'interceptor', 'Auth interceptor — attaches JWT Bearer token to outgoing HTTP requests.'),
-                      f('error.interceptor.ts', 'interceptor', 'Error interceptor — handles 401/500 errors globally, shows notifications.'),
-                      f('loading.interceptor.ts', 'interceptor', 'Loading interceptor — tracks HTTP request state for loading spinners.'),
-                      f('cache.interceptor.ts', 'interceptor', 'Cache interceptor — caches GET responses to reduce redundant API calls.')
+                      f('auth.ts', 'interceptor', 'Auth interceptor — attaches JWT Bearer token to outgoing HTTP requests.'),
+                      f('error.ts', 'interceptor', 'Error interceptor — handles 401/500 errors globally, shows notifications.'),
+                      f('loading.ts', 'interceptor', 'Loading interceptor — tracks HTTP request state for loading spinners.'),
+                      f('cache.ts', 'interceptor', 'Cache interceptor — caches GET responses to reduce redundant API calls.')
                     ]
                   },
                   {
                     name: 'services', type: 'folder',
                     desc: 'Singleton services — app-wide services using inject() for DI.',
                     children: [
-                      f('auth.service.ts', 'service', 'Auth service — manages login, logout, token, and user state via signals.'),
-                      f('storage.service.ts', 'service', 'Storage service — type-safe localStorage/sessionStorage abstraction.'),
-                      f('logger.service.ts', 'service', 'Logger service — centralized logging with configurable log levels.'),
-                      f('notification.service.ts', 'service', 'Notification service — toast/snackbar notifications with signal state.')
+                      f('auth.ts', 'service', 'Auth service — manages login, logout, token, and user state via signals.'),
+                      f('storage.ts', 'service', 'Storage service — type-safe localStorage/sessionStorage abstraction.'),
+                      f('logger.ts', 'service', 'Logger service — centralized logging with configurable log levels.'),
+                      f('notification.ts', 'service', 'Notification service — toast/snackbar notifications with signal state.')
                     ]
                   },
                   {
                     name: 'models', type: 'folder', desc: 'Global TypeScript interfaces and types.',
                     children: [
-                      f('user.model.ts', 'model', 'User interface — id, name, email, role, avatar, timestamps.'),
-                      f('api-response.model.ts', 'model', 'Generic API response wrapper — data, message, status, error.'),
-                      f('pagination.model.ts', 'model', 'Pagination interface — page, pageSize, total, items.')
+                      f('user.ts', 'model', 'User interface — id, name, email, role, avatar, timestamps.'),
+                      f('api-response.ts', 'model', 'Generic API response wrapper — data, message, status, error.'),
+                      f('pagination.ts', 'model', 'Pagination interface — page, pageSize, total, items.')
                     ]
                   },
                   {
                     name: 'enums', type: 'folder', desc: 'TypeScript enums for type-safe constants.',
                     children: [
-                      f('role.enum.ts', 'enum', 'Role enum — Admin, Editor, Viewer.'),
-                      f('status.enum.ts', 'enum', 'Status enum — Active, Inactive, Pending, Deleted.')
+                      f('role.ts', 'enum', 'Role enum — Admin, Editor, Viewer.'),
+                      f('status.ts', 'enum', 'Status enum — Active, Inactive, Pending, Deleted.')
                     ]
                   },
                   {
                     name: 'constants', type: 'folder', desc: 'Application-wide readonly constants.',
                     children: [
-                      f('api-endpoints.constant.ts', 'constant', 'API endpoints — centralized URL mapping.'),
-                      f('app.constant.ts', 'constant', 'App constants — name, version, default page size, storage keys.')
+                      f('api-endpoints.ts', 'constant', 'API endpoints — centralized URL mapping.'),
+                      f('app.ts', 'constant', 'App constants — name, version, default page size, storage keys.')
                     ]
                   },
                   {
                     name: 'utils', type: 'folder', desc: 'Pure utility functions — no Angular dependencies.',
                     children: [
-                      f('date.util.ts', 'util', 'Date utilities — format, parse, compare, relative time.'),
-                      f('string.util.ts', 'util', 'String utilities — slugify, capitalize, truncate, sanitize.'),
-                      f('validators.util.ts', 'util', 'Custom validator functions — email, password, phone patterns.')
+                      f('date.ts', 'util', 'Date utilities — format, parse, compare, relative time.'),
+                      f('string.ts', 'util', 'String utilities — slugify, capitalize, truncate, sanitize.'),
+                      f('validators.ts', 'util', 'Custom validator functions — email, password, phone patterns.')
                     ]
                   }
                 ]
@@ -223,17 +223,17 @@
                   {
                     name: 'directives', type: 'folder', desc: 'Custom Angular directives.',
                     children: [
-                      f('highlight.directive.ts', 'directive', 'Highlight directive — background highlight on hover.'),
-                      f('tooltip.directive.ts', 'directive', 'Tooltip directive — hover tooltip with configurable position.'),
-                      f('click-outside.directive.ts', 'directive', 'Click-outside directive — emits event on outside click.')
+                      f('highlight.ts', 'directive', 'Highlight directive — background highlight on hover.'),
+                      f('tooltip.ts', 'directive', 'Tooltip directive — hover tooltip with configurable position.'),
+                      f('click-outside.ts', 'directive', 'Click-outside directive — emits event on outside click.')
                     ]
                   },
                   {
                     name: 'pipes', type: 'folder', desc: 'Custom Angular pipes for template transforms.',
                     children: [
-                      f('truncate.pipe.ts', 'pipe', 'Truncate pipe — shortens text: {{ text | truncate:100 }}'),
-                      f('time-ago.pipe.ts', 'pipe', 'Time-ago pipe — relative time: "5 minutes ago".'),
-                      f('safe-html.pipe.ts', 'pipe', 'Safe HTML pipe — renders trusted HTML via DomSanitizer.')
+                      f('truncate-pipe.ts', 'pipe', 'Truncate pipe — shortens text: {{ text | truncate:100 }}'),
+                      f('time-ago-pipe.ts', 'pipe', 'Time-ago pipe — relative time: "5 minutes ago".'),
+                      f('safe-html-pipe.ts', 'pipe', 'Safe HTML pipe — renders trusted HTML via DomSanitizer.')
                     ]
                   },
                   {
@@ -262,10 +262,10 @@
                         ]
                       },
                       { name: 'services', type: 'folder', desc: 'Auth-scoped API services.',
-                        children: [f('auth-api.service.ts', 'service', 'Auth API — login, register, forgot password, token refresh.')]
+                        children: [f('auth-api.ts', 'service', 'Auth API — login, register, forgot password, token refresh.')]
                       },
                       { name: 'models', type: 'folder', desc: 'Auth TypeScript interfaces.',
-                        children: [f('auth.model.ts', 'model', 'LoginRequest, RegisterRequest, AuthResponse, TokenPayload.')]
+                        children: [f('auth.ts', 'model', 'LoginRequest, RegisterRequest, AuthResponse, TokenPayload.')]
                       },
                       f('auth.routes.ts', 'routes', 'Auth routes — /auth/login, /auth/register, /auth/forgot-password.')
                     ]
@@ -300,10 +300,10 @@
                         ]
                       },
                       { name: 'services', type: 'folder', desc: 'Users-scoped API services.',
-                        children: [f('users-api.service.ts', 'service', 'Users API — CRUD: getAll, getById, create, update, delete.')]
+                        children: [f('users-api.ts', 'service', 'Users API — CRUD: getAll, getById, create, update, delete.')]
                       },
                       { name: 'models', type: 'folder', desc: 'User feature TypeScript interfaces.',
-                        children: [f('user-feature.model.ts', 'model', 'UserListItem, UserDetail, CreateUserRequest, UpdateUserRequest.')]
+                        children: [f('user-feature.ts', 'model', 'UserListItem, UserDetail, CreateUserRequest, UpdateUserRequest.')]
                       },
                       f('users.routes.ts', 'routes', 'Users routes — /users (list) and /users/:id (detail).')
                     ]
@@ -317,33 +317,33 @@
                   {
                     name: 'header', type: 'folder', desc: 'Top navigation bar.',
                     children: [
-                      f('header.component.ts', 'component', 'Header component — nav state, user menu, theme toggle.'),
-                      f('header.component.html', 'html', 'Header template — logo, nav links, search, user avatar.'),
-                      f('header.component.scss', 'style', 'Header styles — sticky, responsive, glassmorphism.')
+                      f('header.ts', 'component', 'Header component — nav state, user menu, theme toggle.'),
+                      f('header.html', 'html', 'Header template — logo, nav links, search, user avatar.'),
+                      f('header.scss', 'style', 'Header styles — sticky, responsive, glassmorphism.')
                     ]
                   },
                   {
                     name: 'sidebar', type: 'folder', desc: 'Vertical navigation panel.',
                     children: [
-                      f('sidebar.component.ts', 'component', 'Sidebar component — open/close state, route highlighting.'),
-                      f('sidebar.component.html', 'html', 'Sidebar template — icons, labels, nested groups.'),
-                      f('sidebar.component.scss', 'style', 'Sidebar styles — fixed, slide animation, mobile overlay.')
+                      f('sidebar.ts', 'component', 'Sidebar component — open/close state, route highlighting.'),
+                      f('sidebar.html', 'html', 'Sidebar template — icons, labels, nested groups.'),
+                      f('sidebar.scss', 'style', 'Sidebar styles — fixed, slide animation, mobile overlay.')
                     ]
                   },
                   {
                     name: 'footer', type: 'folder', desc: 'Footer with copyright and links.',
                     children: [
-                      f('footer.component.ts', 'component', 'Footer component — dynamic copyright year.'),
-                      f('footer.component.html', 'html', 'Footer template — copyright, social links.'),
-                      f('footer.component.scss', 'style', 'Footer styles — border-top, centered content.')
+                      f('footer.ts', 'component', 'Footer component — dynamic copyright year.'),
+                      f('footer.html', 'html', 'Footer template — copyright, social links.'),
+                      f('footer.scss', 'style', 'Footer styles — border-top, centered content.')
                     ]
                   },
                   {
                     name: 'main-layout', type: 'folder', desc: 'Composes header + sidebar + router-outlet + footer.',
                     children: [
-                      f('main-layout.component.ts', 'component', 'Main layout — sidebar visibility, content area sizing.'),
-                      f('main-layout.component.html', 'html', 'Main layout template — <app-header>, <app-sidebar>, <router-outlet>, <app-footer>.'),
-                      f('main-layout.component.scss', 'style', 'Main layout styles — CSS grid for shell positioning.')
+                      f('main-layout.ts', 'component', 'Main layout — sidebar visibility, content area sizing.'),
+                      f('main-layout.html', 'html', 'Main layout template — <app-header>, <app-sidebar>, <router-outlet>, <app-footer>.'),
+                      f('main-layout.scss', 'style', 'Main layout styles — CSS grid for shell positioning.')
                     ]
                   }
                 ]
@@ -391,9 +391,9 @@
           {
             name: 'app', type: 'folder', desc: 'Application root directory.',
             children: [
-              f('app.component.ts', 'component', 'Root standalone component.'),
-              f('app.component.html', 'html', 'Root template.'),
-              f('app.component.scss', 'style', 'Root styles.'),
+              f('app.ts', 'component', 'Root component.'),
+              f('app.html', 'html', 'Root template.'),
+              f('app.scss', 'style', 'Root styles.'),
               f('app.config.ts', 'config', 'App config — provideStore, provideEffects, provideRouter.'),
               f('app.routes.ts', 'routes', 'Root lazy routes with guards.'),
               {
@@ -401,26 +401,26 @@
                 children: [
                   { name: 'guards', type: 'folder', desc: 'Functional route guards.',
                     children: [
-                      f('auth.guard.ts', 'guard', 'Auth guard — checks auth signal state.'),
-                      f('role.guard.ts', 'guard', 'Role guard — checks user role from store.')
+                      f('auth.ts', 'guard', 'Auth guard — checks auth signal state.'),
+                      f('role.ts', 'guard', 'Role guard — checks user role from store.')
                     ]
                   },
                   { name: 'interceptors', type: 'folder', desc: 'HTTP interceptors.',
                     children: [
-                      f('auth.interceptor.ts', 'interceptor', 'Attaches JWT token from store/signal.'),
-                      f('error.interceptor.ts', 'interceptor', 'Global error handler, dispatches error actions.')
+                      f('auth.ts', 'interceptor', 'Attaches JWT token from store/signal.'),
+                      f('error.ts', 'interceptor', 'Global error handler, dispatches error actions.')
                     ]
                   },
                   { name: 'services', type: 'folder', desc: 'App-wide singleton services.',
                     children: [
-                      f('auth.service.ts', 'service', 'Auth service — signal-based user state.'),
-                      f('logger.service.ts', 'service', 'Logger with external integration support.')
+                      f('auth.ts', 'service', 'Auth service — signal-based user state.'),
+                      f('logger.ts', 'service', 'Logger with external integration support.')
                     ]
                   },
-                  { name: 'models', type: 'folder', desc: 'Global TypeScript interfaces.', children: [f('user.model.ts', 'model', 'User interface.')] },
-                  { name: 'enums', type: 'folder', desc: 'TypeScript enums.', children: [f('role.enum.ts', 'enum', 'Role enum.')] },
-                  { name: 'constants', type: 'folder', desc: 'App constants.', children: [f('api-endpoints.constant.ts', 'constant', 'Centralized API endpoints.')] },
-                  { name: 'utils', type: 'folder', desc: 'Pure utility functions.', children: [f('date.util.ts', 'util', 'Date helpers.'), f('string.util.ts', 'util', 'String helpers.')] }
+                  { name: 'models', type: 'folder', desc: 'Global TypeScript interfaces.', children: [f('user.ts', 'model', 'User interface.')] },
+                  { name: 'enums', type: 'folder', desc: 'TypeScript enums.', children: [f('role.ts', 'enum', 'Role enum.')] },
+                  { name: 'constants', type: 'folder', desc: 'App constants.', children: [f('api-endpoints.ts', 'constant', 'Centralized API endpoints.')] },
+                  { name: 'utils', type: 'folder', desc: 'Pure utility functions.', children: [f('date.ts', 'util', 'Date helpers.'), f('string.ts', 'util', 'String helpers.')] }
                 ]
               },
               {
@@ -432,8 +432,8 @@
                       componentFolder('modal', 'Reusable modal component.')
                     ]
                   },
-                  { name: 'directives', type: 'folder', desc: 'Custom directives.', children: [f('highlight.directive.ts', 'directive', 'Highlight on hover.')] },
-                  { name: 'pipes', type: 'folder', desc: 'Custom pipes.', children: [f('truncate.pipe.ts', 'pipe', 'Truncate text.')] },
+                  { name: 'directives', type: 'folder', desc: 'Custom directives.', children: [f('highlight.ts', 'directive', 'Highlight on hover.')] },
+                  { name: 'pipes', type: 'folder', desc: 'Custom pipes.', children: [f('truncate-pipe.ts', 'pipe', 'Truncate text.')] },
                   { name: 'validators', type: 'folder', desc: 'Form validators.', children: [f('password-match.validator.ts', 'validator', 'Password match.')] }
                 ]
               },
@@ -494,9 +494,9 @@
               {
                 name: 'layout', type: 'folder', desc: 'App shell layout components.',
                 children: [
-                  { name: 'header', type: 'folder', desc: 'Header.', children: [f('header.component.ts', 'component', 'Header.'), f('header.component.html', 'html', 'Header template.'), f('header.component.scss', 'style', 'Header styles.')] },
-                  { name: 'footer', type: 'folder', desc: 'Footer.', children: [f('footer.component.ts', 'component', 'Footer.'), f('footer.component.html', 'html', 'Footer template.'), f('footer.component.scss', 'style', 'Footer styles.')] },
-                  { name: 'sidebar', type: 'folder', desc: 'Sidebar nav.', children: [f('sidebar.component.ts', 'component', 'Sidebar.'), f('sidebar.component.html', 'html', 'Sidebar template.'), f('sidebar.component.scss', 'style', 'Sidebar styles.')] }
+                  { name: 'header', type: 'folder', desc: 'Header.', children: [f('header.ts', 'component', 'Header.'), f('header.html', 'html', 'Header template.'), f('header.scss', 'style', 'Header styles.')] },
+                  { name: 'footer', type: 'folder', desc: 'Footer.', children: [f('footer.ts', 'component', 'Footer.'), f('footer.html', 'html', 'Footer template.'), f('footer.scss', 'style', 'Footer styles.')] },
+                  { name: 'sidebar', type: 'folder', desc: 'Sidebar nav.', children: [f('sidebar.ts', 'component', 'Sidebar.'), f('sidebar.html', 'html', 'Sidebar template.'), f('sidebar.scss', 'style', 'Sidebar styles.')] }
                 ]
               },
               {
@@ -510,7 +510,7 @@
               {
                 name: 'api', type: 'folder', desc: 'API layer — base service class and API configuration.',
                 children: [
-                  f('base-api.service.ts', 'service', 'Base API service — abstract class with CRUD methods, error handling, type-safe generics.'),
+                  f('base-api.ts', 'service', 'Base API service — abstract class with CRUD methods, error handling, type-safe generics.'),
                   f('api.config.ts', 'config', 'API configuration — base URL, headers, timeout from environment.')
                 ]
               }
@@ -581,7 +581,7 @@
                   {
                     name: 'app', type: 'folder', desc: 'Root app module.',
                     children: [
-                      f('app.component.ts', 'component', 'Root standalone component.'),
+                      f('app.ts', 'component', 'Root component.'),
                       f('app.config.ts', 'config', 'App config — provideStore, provideRouter, lib providers.'),
                       f('app.routes.ts', 'routes', 'Root routes — lazy-loads from lib route configs.')
                     ]
@@ -606,8 +606,8 @@
                   {
                     name: 'lib', type: 'folder', desc: 'Library components.',
                     children: [
-                      { name: 'button', type: 'folder', desc: 'Button component.', children: [f('button.component.ts', 'component', 'Reusable button.'), f('button.component.html', 'html', 'Button template.'), f('button.harness.ts', 'ts', 'Component harness for testing.')] },
-                      { name: 'modal', type: 'folder', desc: 'Modal component.', children: [f('modal.component.ts', 'component', 'Reusable modal.'), f('modal.component.html', 'html', 'Modal template.')] }
+                      { name: 'button', type: 'folder', desc: 'Button component.', children: [f('button.ts', 'component', 'Reusable button.'), f('button.html', 'html', 'Button template.'), f('button.harness.ts', 'ts', 'Component harness for testing.')] },
+                      { name: 'modal', type: 'folder', desc: 'Modal component.', children: [f('modal.ts', 'component', 'Reusable modal.'), f('modal.html', 'html', 'Modal template.')] }
                     ]
                   },
                   f('index.ts', 'ts', 'Public API barrel — exports all lib components.')
@@ -632,8 +632,8 @@
                   {
                     name: 'lib', type: 'folder', desc: 'Auth lib modules.',
                     children: [
-                      f('auth.service.ts', 'service', 'Shared auth service used by all apps.'),
-                      f('auth.guard.ts', 'guard', 'Functional auth guard exported from lib.'),
+                      f('auth.ts', 'service', 'Shared auth service used by all apps.'),
+                      f('auth.ts', 'guard', 'Functional auth guard exported from lib.'),
                       {
                         name: 'store', type: 'folder', desc: 'NgRx auth store.',
                         children: [
@@ -667,8 +667,8 @@
                   {
                     name: 'lib', type: 'folder', desc: 'Feature API services.',
                     children: [
-                      { name: 'users', type: 'folder', desc: 'Users data access.', children: [f('users.service.ts', 'service', 'Users API service.'), f('users.store.ts', 'ts', 'Users signal store.')] },
-                      { name: 'products', type: 'folder', desc: 'Products data access.', children: [f('products.service.ts', 'service', 'Products API service.'), f('products.store.ts', 'ts', 'Products signal store.')] }
+                      { name: 'users', type: 'folder', desc: 'Users data access.', children: [f('users.ts', 'service', 'Users API service.'), f('users.store.ts', 'ts', 'Users signal store.')] },
+                      { name: 'products', type: 'folder', desc: 'Products data access.', children: [f('products.ts', 'service', 'Products API service.'), f('products.store.ts', 'ts', 'Products signal store.')] }
                     ]
                   },
                   f('index.ts', 'ts', 'Barrel exports for all data access.')
@@ -735,22 +735,24 @@
   // ========================================================================
   function getIcon(node) {
     if (node.type === 'folder') return '📁';
+    if (node.type === 'spec') return '🧪';
+    if (node.type === 'component') return '🧩';
+    if (node.type === 'html') return '📄';
+    if (node.type === 'style') return '🎨';
+    if (node.type === 'service') return '⚙️';
+    if (node.type === 'guard') return '🛡️';
+    if (node.type === 'interceptor') return '🔌';
+    if (node.type === 'pipe') return '🔧';
+    if (node.type === 'directive') return '📌';
+    if (node.type === 'model') return '📋';
+    if (node.type === 'routes') return '🔀';
+    if (node.type === 'enum') return '📊';
+    if (node.type === 'constant') return '📎';
+    if (node.type === 'util') return '🛠️';
+    if (node.type === 'validator') return '✅';
+    if (node.type === 'env') return '🌍';
     var nameLC = node.name.toLowerCase();
-    if (nameLC.includes('.component.spec') || nameLC.includes('.spec.')) return '🧪';
-    if (nameLC.includes('.component.ts')) return '🧩';
-    if (nameLC.includes('.component.html')) return '📄';
-    if (nameLC.includes('.component.scss')) return '🎨';
-    if (nameLC.includes('.service.')) return '⚙️';
-    if (nameLC.includes('.guard.')) return '🛡️';
-    if (nameLC.includes('.interceptor.')) return '🔌';
-    if (nameLC.includes('.pipe.')) return '🔧';
-    if (nameLC.includes('.directive.')) return '📌';
-    if (nameLC.includes('.model.')) return '📋';
-    if (nameLC.includes('.routes.')) return '🔀';
-    if (nameLC.includes('.enum.')) return '📊';
-    if (nameLC.includes('.constant.')) return '📎';
-    if (nameLC.includes('.util.')) return '🛠️';
-    if (nameLC.includes('.validator.')) return '✅';
+    if (nameLC.includes('.spec.')) return '🧪';
     if (nameLC.includes('.harness.')) return '🔬';
     if (nameLC.includes('.resolver.')) return '🔄';
     if (nameLC.includes('environment')) return '🌍';
@@ -766,22 +768,25 @@
 
   function getColorClass(node) {
     if (node.type === 'folder') return 'ft-folder';
+    if (node.type === 'spec') return 'ft-spec';
+    if (node.type === 'component') return 'ft-component';
+    if (node.type === 'html') return 'ft-html';
+    if (node.type === 'style') return 'ft-style';
+    if (node.type === 'service') return 'ft-service';
+    if (node.type === 'guard') return 'ft-guard';
+    if (node.type === 'interceptor') return 'ft-interceptor';
+    if (node.type === 'pipe') return 'ft-pipe';
+    if (node.type === 'directive') return 'ft-directive';
+    if (node.type === 'model') return 'ft-model';
+    if (node.type === 'routes') return 'ft-routes';
+    if (node.type === 'enum') return 'ft-enum';
+    if (node.type === 'constant') return 'ft-constant';
+    if (node.type === 'util') return 'ft-util';
+    if (node.type === 'validator') return 'ft-validator';
+    if (node.type === 'env') return 'ft-env';
     var name = node.name.toLowerCase();
-    if (name.includes('.component.spec') || name.includes('.spec.')) return 'ft-spec';
-    if (name.includes('.component.ts')) return 'ft-component';
-    if (name.includes('.component.html')) return 'ft-html';
-    if (name.includes('.component.scss')) return 'ft-style';
-    if (name.includes('.service.')) return 'ft-service';
-    if (name.includes('.guard.')) return 'ft-guard';
-    if (name.includes('.interceptor.')) return 'ft-interceptor';
-    if (name.includes('.pipe.')) return 'ft-pipe';
-    if (name.includes('.directive.')) return 'ft-directive';
-    if (name.includes('.model.')) return 'ft-model';
+    if (name.includes('.spec.')) return 'ft-spec';
     if (name.includes('.routes.')) return 'ft-routes';
-    if (name.includes('.enum.')) return 'ft-enum';
-    if (name.includes('.constant.')) return 'ft-constant';
-    if (name.includes('.util.')) return 'ft-util';
-    if (name.includes('.validator.')) return 'ft-validator';
     if (name.includes('environment')) return 'ft-env';
     if (name.endsWith('.scss')) return 'ft-style';
     if (name.endsWith('.html')) return 'ft-html';
@@ -792,22 +797,25 @@
 
   function getTypeBadge(node) {
     if (node.type === 'folder') return 'Folder';
+    if (node.type === 'spec') return 'Test';
+    if (node.type === 'component') return 'Component';
+    if (node.type === 'html') return 'Template';
+    if (node.type === 'style') return 'Styles';
+    if (node.type === 'service') return 'Service';
+    if (node.type === 'guard') return 'Guard';
+    if (node.type === 'interceptor') return 'Interceptor';
+    if (node.type === 'pipe') return 'Pipe';
+    if (node.type === 'directive') return 'Directive';
+    if (node.type === 'model') return 'Model';
+    if (node.type === 'routes') return 'Routes';
+    if (node.type === 'enum') return 'Enum';
+    if (node.type === 'constant') return 'Constant';
+    if (node.type === 'util') return 'Utility';
+    if (node.type === 'validator') return 'Validator';
+    if (node.type === 'env') return 'Environment';
     var name = node.name.toLowerCase();
-    if (name.includes('.component.spec') || name.includes('.spec.')) return 'Test';
-    if (name.includes('.component.ts')) return 'Component';
-    if (name.includes('.component.html')) return 'Template';
-    if (name.includes('.component.scss')) return 'Styles';
-    if (name.includes('.service.')) return 'Service';
-    if (name.includes('.guard.')) return 'Guard';
-    if (name.includes('.interceptor.')) return 'Interceptor';
-    if (name.includes('.pipe.')) return 'Pipe';
-    if (name.includes('.directive.')) return 'Directive';
-    if (name.includes('.model.')) return 'Model';
+    if (name.includes('.spec.')) return 'Test';
     if (name.includes('.routes.')) return 'Routes';
-    if (name.includes('.enum.')) return 'Enum';
-    if (name.includes('.constant.')) return 'Constant';
-    if (name.includes('.util.')) return 'Utility';
-    if (name.includes('.validator.')) return 'Validator';
     if (name.includes('.resolver.')) return 'Resolver';
     if (name.includes('environment')) return 'Environment';
     if (name.endsWith('.scss')) return 'Styles';

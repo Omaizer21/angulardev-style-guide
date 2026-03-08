@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Angular 17+ Best Practices — Interactive guide to folder structure, state management, testing, performance, and migration.">
+  <meta name="description" content="Angular 20+ Best Practices — Interactive guide to folder structure, state management, testing, performance, and migration.">
   <meta name="keywords" content="Angular, best practices, standalone components, signals, NgRx, folder structure, architecture">
   <meta name="author" content="Omaizer21">
   <title>Angular Best Practices — Interactive Guide</title>
@@ -57,9 +57,9 @@
       <div class="hero__bg"></div>
       <canvas id="particleCanvas"></canvas>
       <div class="container hero__content">
-        <div class="hero__badge">&#x1F4C2; Angular 17+ Guide &mdash; Standalone &middot; Signals &middot; @if/@for</div>
+        <div class="hero__badge">&#x1F4C2; Angular 20+ Guide &mdash; Standalone &middot; Signals &middot; @if/@for</div>
         <h1 class="hero__title">Angular <span class="gradient-text">Best Practices</span></h1>
-        <p class="hero__subtitle">A comprehensive, interactive reference for structuring scalable Angular 17+ applications &mdash; from small prototypes to enterprise monorepos.</p>
+        <p class="hero__subtitle">A comprehensive, interactive reference for structuring scalable Angular 20+ applications &mdash; from small prototypes to enterprise monorepos.</p>
         <div class="hero__actions">
           <a href="#folder-tree" class="btn btn--primary">Explore Structure</a>
           <a href="#state" class="btn btn--outline">State Management</a>
@@ -158,7 +158,7 @@
           <div class="arch-card glass-card animate-on-scroll">
             <div class="arch-card__icon">&#x1F9E0;</div>
             <h3 class="arch-card__title">core/</h3>
-            <p class="arch-card__desc">Singleton services, <span data-tooltip="In Angular 17+, guards are plain functions: export const authGuard = () => inject(AuthService).isLoggedIn()">functional guards</span>, <span data-tooltip="Functional interceptors use HttpInterceptorFn type">functional interceptors</span>, models, enums, constants, and utilities. Provided at the root &mdash; app-wide singletons.</p>
+            <p class="arch-card__desc">Singleton services, <span data-tooltip="Functional guards: export const authGuard = () => inject(AuthService).isLoggedIn()">functional guards</span>, <span data-tooltip="Functional interceptors use HttpInterceptorFn type">functional interceptors</span>, models, enums, constants, and utilities. Provided at the root &mdash; app-wide singletons.</p>
             <ul class="arch-card__list">
               <li>Functional guards (auth, role, no-auth)</li>
               <li>Functional interceptors (auth, error, loading)</li>
@@ -208,74 +208,86 @@
       <div class="container">
         <div class="section__header animate-on-scroll">
           <h2 class="section__title">Naming Conventions</h2>
-          <p class="section__subtitle">Angular&#39;s consistent file naming conventions for every artifact type.</p>
+          <p class="section__subtitle">Angular 2025 folder-based naming — the folder provides context, not the file suffix.</p>
         </div>
+
+        <div class="glass-card animate-on-scroll" style="margin-bottom:28px;padding:18px 22px;border-left:4px solid var(--accent);background:var(--accent-bg);">
+          <strong style="color:var(--accent);">&#x1F4C5; Angular v20 Style Guide Update (2025)</strong>
+          <p style="margin:8px 0 0;font-size:0.88rem;color:var(--text-secondary);">As of Angular v20, the official style guide no longer recommends type suffixes in filenames (<code>.component.ts</code>, <code>.service.ts</code>, etc.). The <strong>folder name</strong> now provides the context. For example, <code>auth.ts</code> inside <code>guards/</code> is clearly a guard. This reduces redundancy and aligns with modern TypeScript community conventions. You can still opt into legacy suffixes via <code>ng generate</code> config if your team prefers them.</p>
+          <p style="margin:8px 0 0;font-size:0.88rem;color:var(--text-secondary);">Additionally, <code>standalone: true</code> is now the <strong>default</strong> since Angular 19 — you no longer need to write it in <code>@Component()</code>, <code>@Directive()</code>, or <code>@Pipe()</code>.</p>
+        </div>
+
         <div class="naming-grid">
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext">.component.ts</span>
+            <span class="naming-card__ext">components/hero.ts</span>
             <h4 class="naming-card__title">Components</h4>
-            <p class="naming-card__desc">UI building blocks. <code>hero.component.ts</code> &rarr; class <code>HeroComponent</code> &rarr; selector <code>app-hero</code>. Always standalone in Angular 17+.</p>
+            <p class="naming-card__desc">UI building blocks live in a <code>components/</code> folder. <code>hero.ts</code> &rarr; class <code>Hero</code> (or <code>HeroComponent</code>) &rarr; selector <code>app-hero</code>. <code>standalone: true</code> is the default since Angular 19.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-service">.service.ts</span>
+            <span class="naming-card__ext ext-service">services/auth.ts</span>
             <h4 class="naming-card__title">Services</h4>
-            <p class="naming-card__desc">Business logic &amp; data access. <code>auth.service.ts</code> &rarr; class <code>AuthService</code>. Use <code>inject()</code> over constructor injection.</p>
+            <p class="naming-card__desc">Business logic &amp; data access in a <code>services/</code> folder. <code>auth.ts</code> &rarr; class <code>Auth</code> (or <code>AuthService</code>). Use <code>inject()</code> over constructor injection.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-guard">.guard.ts</span>
+            <span class="naming-card__ext ext-guard">guards/auth.ts</span>
             <h4 class="naming-card__title">Guards</h4>
-            <p class="naming-card__desc">Route protection. <code>auth.guard.ts</code> &rarr; function <code>authGuard</code>. Angular 17+ uses functional guards via <code>CanActivateFn</code>.</p>
+            <p class="naming-card__desc">Route protection in a <code>guards/</code> folder. <code>auth.ts</code> &rarr; function <code>authGuard</code>. Uses functional <code>CanActivateFn</code> type.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-interceptor">.interceptor.ts</span>
+            <span class="naming-card__ext ext-interceptor">interceptors/auth.ts</span>
             <h4 class="naming-card__title">Interceptors</h4>
-            <p class="naming-card__desc">HTTP middleware. <code>auth.interceptor.ts</code> &rarr; function <code>authInterceptor</code>. Uses <code>HttpInterceptorFn</code> type.</p>
+            <p class="naming-card__desc">HTTP middleware in an <code>interceptors/</code> folder. <code>auth.ts</code> &rarr; function <code>authInterceptor</code>. Uses <code>HttpInterceptorFn</code> type.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-pipe">.pipe.ts</span>
+            <span class="naming-card__ext ext-pipe">pipes/truncate-pipe.ts</span>
             <h4 class="naming-card__title">Pipes</h4>
-            <p class="naming-card__desc">Template transforms. <code>truncate.pipe.ts</code> &rarr; class <code>TruncatePipe</code>. Mark as <code>standalone: true</code>.</p>
+            <p class="naming-card__desc">Template transforms in a <code>pipes/</code> folder. Use a hyphenated suffix: <code>truncate-pipe.ts</code> &rarr; class <code>TruncatePipe</code>. No dot suffix needed.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-directive">.directive.ts</span>
+            <span class="naming-card__ext ext-directive">directives/highlight.ts</span>
             <h4 class="naming-card__title">Directives</h4>
-            <p class="naming-card__desc">DOM behavior. <code>highlight.directive.ts</code> &rarr; class <code>HighlightDirective</code>. Mark as <code>standalone: true</code>.</p>
+            <p class="naming-card__desc">DOM behavior in a <code>directives/</code> folder. <code>highlight.ts</code> &rarr; class <code>Highlight</code> (or <code>HighlightDirective</code>).</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-model">.model.ts</span>
+            <span class="naming-card__ext ext-model">models/user.ts</span>
             <h4 class="naming-card__title">Models</h4>
-            <p class="naming-card__desc">TypeScript interfaces/types. <code>user.model.ts</code> &rarr; interface <code>User</code>. Prefer interfaces over classes for data shapes.</p>
+            <p class="naming-card__desc">TypeScript interfaces/types in a <code>models/</code> folder. <code>user.ts</code> &rarr; interface <code>User</code>. Prefer interfaces over classes for data shapes.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-spec">.spec.ts</span>
+            <span class="naming-card__ext ext-spec">hero.spec.ts</span>
             <h4 class="naming-card__title">Tests</h4>
-            <p class="naming-card__desc">Unit tests co-located with source. <code>hero.component.spec.ts</code> tests <code>HeroComponent</code>. Use <code>TestBed</code> for Angular-specific testing.</p>
+            <p class="naming-card__desc">Unit tests co-located with source. <code>hero.spec.ts</code> tests the <code>Hero</code> component. The <code>.spec.ts</code> suffix is <strong>retained</strong> in v20. Use <code>TestBed</code> for Angular testing.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-routes">.routes.ts</span>
             <h4 class="naming-card__title">Routes</h4>
-            <p class="naming-card__desc">Route definitions. <code>auth.routes.ts</code> &rarr; export <code>AUTH_ROUTES</code>. Use <code>loadComponent</code> and <code>loadChildren</code>.</p>
+            <p class="naming-card__desc">Route definitions. <code>auth.routes.ts</code> &rarr; export <code>AUTH_ROUTES</code>. Use <code>loadComponent</code> and <code>loadChildren</code>. The <code>.routes.ts</code> suffix is retained.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-resolver">.resolver.ts</span>
+            <span class="naming-card__ext ext-resolver">resolvers/user.ts</span>
             <h4 class="naming-card__title">Resolvers</h4>
-            <p class="naming-card__desc">Pre-load route data. <code>user.resolver.ts</code> &rarr; function <code>userResolver</code>. Uses <code>ResolveFn&lt;T&gt;</code> functional type in Angular 17+.</p>
+            <p class="naming-card__desc">Pre-load route data in a <code>resolvers/</code> folder. <code>user.ts</code> &rarr; function <code>userResolver</code>. Uses <code>ResolveFn&lt;T&gt;</code> functional type.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-enum">.enum.ts</span>
+            <span class="naming-card__ext ext-enum">enums/role.ts</span>
             <h4 class="naming-card__title">Enums</h4>
-            <p class="naming-card__desc">Enumerated types. <code>role.enum.ts</code> &rarr; enum <code>Role</code>. Consider <code>as const</code> objects for tree-shakable alternatives.</p>
+            <p class="naming-card__desc">Enumerated types in an <code>enums/</code> folder. <code>role.ts</code> &rarr; enum <code>Role</code>. Consider <code>as const</code> objects for tree-shakable alternatives.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-constant">.constant.ts</span>
+            <span class="naming-card__ext ext-constant">constants/api-endpoints.ts</span>
             <h4 class="naming-card__title">Constants</h4>
-            <p class="naming-card__desc">App-wide constants. <code>api-endpoints.constant.ts</code> &rarr; export <code>API_ENDPOINTS</code>. Use <code>as const</code> for type narrowing.</p>
+            <p class="naming-card__desc">App-wide constants in a <code>constants/</code> folder. <code>api-endpoints.ts</code> &rarr; export <code>API_ENDPOINTS</code>. Use <code>as const</code> for type narrowing.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-util">.util.ts</span>
+            <span class="naming-card__ext ext-util">utils/date.ts</span>
             <h4 class="naming-card__title">Utilities</h4>
-            <p class="naming-card__desc">Pure helper functions. <code>date.util.ts</code> &rarr; named exports. No Angular dependencies &mdash; easily unit-testable.</p>
+            <p class="naming-card__desc">Pure helper functions in a <code>utils/</code> folder. <code>date.ts</code> &rarr; named exports. No Angular dependencies &mdash; easily unit-testable.</p>
           </div>
+        </div>
+
+        <div class="glass-card animate-on-scroll" style="margin-top:24px;padding:16px 20px;font-size:0.85rem;color:var(--text-secondary);">
+          <strong style="color:var(--text-primary);">&#x1F4CB; Class Name Suffixes — Optional in v20</strong>
+          <p style="margin:6px 0 0;">Class name suffixes (<code>HeroComponent</code>, <code>AuthService</code>) are now <strong>optional</strong>. Many teams use <code>Hero</code> and <code>Auth</code> instead. Using suffixes is still valid — pick whichever convention your team agrees on and apply it consistently.</p>
         </div>
       </div>
     </section>
@@ -350,7 +362,7 @@
               </div>
             </div>
             <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:12px;">Reactive primitives built into Angular. Zero dependencies, fine-grained reactivity, and seamless integration with <code>OnPush</code> change detection. Best for local UI state and simple shared services.</p>
-            <pre class="code-block">// counter.service.ts
+            <pre class="code-block">// counter.ts (in services/)
 import { Injectable, signal, computed } from &#39;@angular/core&#39;;
 
 @Injectable({ providedIn: &#39;root&#39; })
@@ -365,14 +377,13 @@ export class CounterService {
 
 // component.ts
 @Component({
-  standalone: true,
   template: `
     &lt;p&gt;Count: {{ counter.count() }}&lt;/p&gt;
     &lt;p&gt;Double: {{ counter.doubleCount() }}&lt;/p&gt;
     &lt;button (click)=&quot;counter.increment()&quot;&gt;+&lt;/button&gt;
   `
 })
-export class CounterComponent {
+export class Counter {
   counter = inject(CounterService);
 }</pre>
           </div>
@@ -398,8 +409,8 @@ export const counterReducer = createReducer(
 );
 
 // component.ts
-@Component({ standalone: true, imports: [AsyncPipe] })
-export class CounterComponent {
+@Component({ imports: [AsyncPipe] })
+export class Counter {
   private store = inject(Store);
   count$ = this.store.select(selectCount);
 
@@ -416,7 +427,7 @@ export class CounterComponent {
               </div>
             </div>
             <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:12px;">A proven pattern using BehaviorSubject for state and exposing observables. Still valid for teams familiar with RxJS, though Signals are the modern replacement.</p>
-            <pre class="code-block">// auth.service.ts (classic BehaviorSubject pattern)
+            <pre class="code-block">// auth.ts (in services/ — classic BehaviorSubject pattern)
 @Injectable({ providedIn: &#39;root&#39; })
 export class AuthService {
   private http = inject(HttpClient);
@@ -555,7 +566,7 @@ test(&#39;user can login and see dashboard&#39;, async ({ page }) =&gt; {
       <div class="container">
         <div class="section__header animate-on-scroll">
           <h2 class="section__title">Performance Tips</h2>
-          <p class="section__subtitle">Practical techniques for fast, efficient Angular 17+ applications.</p>
+          <p class="section__subtitle">Practical techniques for fast, efficient Angular 20+ applications.</p>
         </div>
         <div class="perf-grid">
           <div class="perf-card glass-card animate-on-scroll">
@@ -563,7 +574,6 @@ test(&#39;user can login and see dashboard&#39;, async ({ page }) =&gt; {
             <h3 class="perf-card__title">OnPush + Signals</h3>
             <p class="perf-card__desc">Use <code>ChangeDetectionStrategy.OnPush</code> on all components. With signals, Angular automatically tracks dependencies &mdash; only rerenders what changed.</p>
             <pre class="code-block">@Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @for (item of items(); track item.id) {
@@ -571,7 +581,7 @@ test(&#39;user can login and see dashboard&#39;, async ({ page }) =&gt; {
     }
   `
 })
-export class ListComponent {
+export class List {
   private svc = inject(DataService);
   items = this.svc.items; // Signal&lt;Item[]&gt;
 }</pre>
@@ -586,8 +596,8 @@ export const routes: Routes = [
   {
     path: &#39;dashboard&#39;,
     loadComponent: () =&gt;
-      import(&#39;./features/dashboard/dashboard.component&#39;)
-        .then(m =&gt; m.DashboardComponent)
+      import(&#39;./features/dashboard/dashboard&#39;)
+        .then(m =&gt; m.DashboardHome)
   },
   {
     path: &#39;users&#39;,
@@ -621,7 +631,7 @@ export const routes: Routes = [
             <p class="perf-card__desc">Reduce initial bundle size with these build-time strategies.</p>
             <ul style="list-style:none;font-size:0.87rem;">
               <li style="padding:6px 0;border-bottom:1px solid var(--border-color);">&#x2705; Use <code>ng build --configuration production</code></li>
-              <li style="padding:6px 0;border-bottom:1px solid var(--border-color);">&#x2705; Enable <code>esbuild</code> builder (default in Angular 17)</li>
+              <li style="padding:6px 0;border-bottom:1px solid var(--border-color);">&#x2705; Enable <code>esbuild</code> builder (default in Angular 17+)</li>
               <li style="padding:6px 0;border-bottom:1px solid var(--border-color);">&#x2705; Analyze bundle: <code>ng build --stats-json</code></li>
               <li style="padding:6px 0;border-bottom:1px solid var(--border-color);">&#x2705; Avoid barrel imports from large libraries</li>
               <li style="padding:6px 0;">&#x2705; Use image optimization with <code>NgOptimizedImage</code></li>
@@ -631,7 +641,7 @@ export const routes: Routes = [
           <div class="perf-card glass-card animate-on-scroll">
             <div class="perf-card__icon">&#x1F504;</div>
             <h3 class="perf-card__title">Defer Blocks</h3>
-            <p class="perf-card__desc">Angular 17&#39;s <code>@defer</code> enables fine-grained lazy loading of template sections, improving LCP and reducing TTI.</p>
+            <p class="perf-card__desc">Angular&#39;s <code>@defer</code> enables fine-grained lazy loading of template sections, improving LCP and reducing TTI.</p>
 @defer (on viewport) {
   &lt;app-heavy-chart [data]=&quot;chartData&quot; /&gt;
 } @placeholder {
@@ -646,7 +656,6 @@ export const routes: Routes = [
             <h3 class="perf-card__title">Image Optimization</h3>
             <p class="perf-card__desc">Use Angular&#39;s built-in <code>NgOptimizedImage</code> directive for automatic lazy loading, responsive sizes, and Core Web Vitals improvements.</p>
             <pre class="code-block">@Component({
-  standalone: true,
   imports: [NgOptimizedImage],
   template: `
     &lt;img ngSrc=&quot;hero.jpg&quot; width=&quot;800&quot;
@@ -656,7 +665,7 @@ export const routes: Routes = [
          height=&quot;300&quot; loading=&quot;lazy&quot; /&gt;
   `
 })
-export class HeroComponent {}</pre>
+export class Hero {}</pre>
           </div>
         </div>
       </div>
@@ -666,7 +675,7 @@ export class HeroComponent {}</pre>
       <div class="container">
         <div class="section__header animate-on-scroll">
           <h2 class="section__title">Common Anti-patterns</h2>
-          <p class="section__subtitle">Mistakes to avoid &mdash; and the Angular 17+ idiomatic alternatives.</p>
+          <p class="section__subtitle">Mistakes to avoid &mdash; and the modern Angular idiomatic alternatives.</p>
         </div>
         <div class="anti-grid">
 
@@ -867,20 +876,18 @@ export class UserListComponent {
 // Angular checks ALL components
 // on every event &amp; async op
 @Component({
-  standalone: true,
   template: `...`
 })
-export class ItemComponent {}</pre>
+export class Item {}</pre>
               </div>
               <div class="anti-good">
                 <div class="anti-good__label">&#x2705; Do</div>
                 <pre>@Component({
-  standalone: true,
   changeDetection:
     ChangeDetectionStrategy.OnPush,
   template: `...`
 })
-export class ItemComponent {
+export class Item {
   // Use signals or immutable data
 }</pre>
               </div>
@@ -895,7 +902,7 @@ export class ItemComponent {
       <div class="container">
         <div class="section__header animate-on-scroll">
           <h2 class="section__title">Migration Guide</h2>
-          <p class="section__subtitle">Step-by-step migration paths to Angular 17+ modern patterns.</p>
+          <p class="section__subtitle">Step-by-step migration paths to modern Angular patterns.</p>
         </div>
         <div class="migration-steps">
 
@@ -927,7 +934,7 @@ platformBrowserDynamic()
   .bootstrapModule(AppModule);</pre>
               </div>
               <div class="migration-after">
-                <div class="migration-after__label">AFTER (Standalone)</div>
+                <div class="migration-after__label">AFTER (Standalone / Angular 19+)</div>
                 <pre>// main.ts
 bootstrapApplication(AppComponent, {
   providers: [
@@ -938,9 +945,8 @@ bootstrapApplication(AppComponent, {
   ]
 });
 
-// app.component.ts
+// app.ts (standalone: true is now the default)
 @Component({
-  standalone: true,
   imports: [RouterOutlet],
   template: `&lt;router-outlet /&gt;`
 })
@@ -1062,8 +1068,8 @@ export class AuthService {
             <div class="migration-before-after">
               <div class="migration-before">
                 <div class="migration-before__label">BEFORE (Constructor DI)</div>
-                <pre>@Component({ standalone: true })
-export class UserListComponent
+                <pre>@Component({})
+export class UserList
   implements OnInit {
 
   users: User[] = [];
@@ -1082,8 +1088,8 @@ export class UserListComponent
               </div>
               <div class="migration-after">
                 <div class="migration-after__label">AFTER (inject() function)</div>
-                <pre>@Component({ standalone: true })
-export class UserListComponent
+                <pre>@Component({})
+export class UserList
   implements OnInit {
 
   private userService = inject(UserService);
@@ -1098,6 +1104,58 @@ export class UserListComponent
       .subscribe(u =&gt; this.users.set(u));
   }
 }</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="migration-step glass-card animate-on-scroll">
+            <div class="migration-step__header">
+              <div class="migration-step__num">5</div>
+              <div class="migration-step__title">Type Suffixes &#x2192; Folder-Based Naming (Angular v20+)</div>
+            </div>
+            <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:14px;">Angular v20 drops mandatory type suffixes. The folder provides context. Rename files progressively &mdash; there&#39;s no automated schematic, so rename as you touch each file.</p>
+            <div class="migration-before-after">
+              <div class="migration-before">
+                <div class="migration-before__label">BEFORE (pre-v20 suffixes)</div>
+                <pre>src/app/
+&#x251C;&#x2500;&#x2500; app.component.ts
+&#x251C;&#x2500;&#x2500; app.component.html
+&#x251C;&#x2500;&#x2500; app.component.scss
+&#x251C;&#x2500;&#x2500; app.component.spec.ts
+&#x2514;&#x2500;&#x2500; core/
+    &#x251C;&#x2500;&#x2500; guards/
+    &#x2502;   &#x2514;&#x2500;&#x2500; auth.guard.ts
+    &#x251C;&#x2500;&#x2500; services/
+    &#x2502;   &#x2514;&#x2500;&#x2500; auth.service.ts
+    &#x251C;&#x2500;&#x2500; interceptors/
+    &#x2502;   &#x2514;&#x2500;&#x2500; auth.interceptor.ts
+    &#x251C;&#x2500;&#x2500; models/
+    &#x2502;   &#x2514;&#x2500;&#x2500; user.model.ts
+    &#x251C;&#x2500;&#x2500; enums/
+    &#x2502;   &#x2514;&#x2500;&#x2500; role.enum.ts
+    &#x2514;&#x2500;&#x2500; pipes/
+        &#x2514;&#x2500;&#x2500; truncate.pipe.ts</pre>
+              </div>
+              <div class="migration-after">
+                <div class="migration-after__label">AFTER (v20 folder-based)</div>
+                <pre>src/app/
+&#x251C;&#x2500;&#x2500; app.ts          &#x2190; component
+&#x251C;&#x2500;&#x2500; app.html
+&#x251C;&#x2500;&#x2500; app.scss
+&#x251C;&#x2500;&#x2500; app.spec.ts     &#x2190; .spec kept
+&#x2514;&#x2500;&#x2500; core/
+    &#x251C;&#x2500;&#x2500; guards/
+    &#x2502;   &#x2514;&#x2500;&#x2500; auth.ts        &#x2190; folder = context
+    &#x251C;&#x2500;&#x2500; services/
+    &#x2502;   &#x2514;&#x2500;&#x2500; auth.ts
+    &#x251C;&#x2500;&#x2500; interceptors/
+    &#x2502;   &#x2514;&#x2500;&#x2500; auth.ts
+    &#x251C;&#x2500;&#x2500; models/
+    &#x2502;   &#x2514;&#x2500;&#x2500; user.ts
+    &#x251C;&#x2500;&#x2500; enums/
+    &#x2502;   &#x2514;&#x2500;&#x2500; role.ts
+    &#x2514;&#x2500;&#x2500; pipes/
+        &#x2514;&#x2500;&#x2500; truncate-pipe.ts &#x2190; hyphenated</pre>
               </div>
             </div>
           </div>
@@ -1130,7 +1188,7 @@ ng g s core/services/notification</code></pre>
             <h4 class="cheat-card__title">&#x1F6E1;&#xFE0F; Generate Guards</h4>
             <pre class="cheat-card__code"><code>ng g guard core/guards/auth
 ng g guard core/guards/role
-# Angular 17: generates CanActivateFn</code></pre>
+# Generates CanActivateFn (functional)</code></pre>
           </div>
           <div class="cheat-card glass-card animate-on-scroll">
             <h4 class="cheat-card__title">&#x1F50C; Generate Interceptors</h4>
@@ -1186,9 +1244,10 @@ ng generate @angular/core:route-lazy-loading</code></pre>
 &#x2514;&#x2500;&#x2500; layout/     &#x2190; shell UI</code></pre>
           </div>
           <div class="cheat-card glass-card animate-on-scroll">
-            <h4 class="cheat-card__title">&#x1F4A1; Angular 17+ Tips</h4>
+            <h4 class="cheat-card__title">&#x1F4A1; Angular 20+ Tips</h4>
             <ul class="cheat-card__list">
-              <li>All components <code>standalone: true</code></li>
+              <li><code>standalone: true</code> is default (Angular 19+)</li>
+              <li>Folder name = file type context (v20+)</li>
               <li>Use <code>inject()</code> over constructor DI</li>
               <li>Prefer <code>signal()</code> for reactive state</li>
               <li>Use <code>@if</code>/<code>@for</code> control flow</li>
