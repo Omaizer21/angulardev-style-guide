@@ -632,8 +632,12 @@
                   {
                     name: 'lib', type: 'folder', desc: 'Auth lib modules.',
                     children: [
-                      f('auth.ts', 'service', 'Shared auth service used by all apps.'),
-                      f('auth.ts', 'guard', 'Functional auth guard exported from lib.'),
+                      { name: 'services', type: 'folder', desc: 'Auth services.',
+                        children: [f('auth.ts', 'service', 'Shared auth service used by all apps.')]
+                      },
+                      { name: 'guards', type: 'folder', desc: 'Auth guards.',
+                        children: [f('auth.ts', 'guard', 'Functional auth guard exported from lib.')]
+                      },
                       {
                         name: 'store', type: 'folder', desc: 'NgRx auth store.',
                         children: [
