@@ -25,6 +25,8 @@
       <ul class="nav__links" id="navLinks">
         <li><a href="#folder-tree" class="nav__link">Folder Tree</a></li>
         <li><a href="#architecture" class="nav__link">Architecture</a></li>
+        <li><a href="#layers-deep-dive" class="nav__link">4 Layers</a></li>
+        <li><a href="#dep-rules" class="nav__link">Dep Rules</a></li>
         <li><a href="#folder-grouping" class="nav__link">Grouping</a></li>
         <li><a href="#naming" class="nav__link">Naming</a></li>
         <li><a href="#principles" class="nav__link">Principles</a></li>
@@ -68,7 +70,7 @@
         </div>
         <div class="hero__stats">
           <div class="hero__stat"><span class="hero__stat-num">4</span><span class="hero__stat-label">Project Sizes</span></div>
-          <div class="hero__stat"><span class="hero__stat-num">11</span><span class="hero__stat-label">Sections</span></div>
+          <div class="hero__stat"><span class="hero__stat-num">13</span><span class="hero__stat-label">Sections</span></div>
           <div class="hero__stat"><span class="hero__stat-num">17+</span><span class="hero__stat-label">Angular Version</span></div>
           <div class="hero__stat"><span class="hero__stat-num">&#x2F;</span><span class="hero__stat-label">Search Shortcut</span></div>
         </div>
@@ -200,6 +202,286 @@
               <li>Footer with links</li>
               <li>Main layout composition component</li>
             </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         4 Layers Deep Dive
+         ===================================================================== -->
+    <section class="section" id="layers-deep-dive">
+      <div class="container">
+        <div class="section__header animate-on-scroll">
+          <h2 class="section__title">The 4 Layers Deep Dive</h2>
+          <p class="section__subtitle">Think of your app as 4 concentric circles. Each layer has one job and one direction it&#39;s allowed to look.</p>
+        </div>
+
+        <!-- Dependency diagram -->
+        <div class="glass-card animate-on-scroll dep-diagram-card">
+          <h3 class="dep-diagram__title">&#x1F9ED; Layer Dependency Rules</h3>
+          <pre class="dep-diagram"><span class="dep-layer">features/</span>  <span class="dep-arrow">&#x2192;</span>  can use <span class="dep-target">core</span> + <span class="dep-target">shared</span>
+<span class="dep-layer">layout/</span>    <span class="dep-arrow">&#x2192;</span>  can use <span class="dep-target">core</span> + <span class="dep-target">shared</span>
+<span class="dep-layer">shared/</span>    <span class="dep-arrow">&#x2192;</span>  can use <span class="dep-forbidden">nothing</span> (pure)
+<span class="dep-layer">core/</span>      <span class="dep-arrow">&#x2192;</span>  can use <span class="dep-forbidden">nothing</span> (pure)</pre>
+        </div>
+
+        <!-- 4 Layer cards -->
+        <div class="arch-grid" style="margin-top:28px;">
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F9E0;</div>
+            <h3 class="arch-card__title">core/ &mdash; The App&#39;s Nervous System</h3>
+            <p class="arch-card__desc">One instance. Always alive. App-wide. Core is for things that need to exist <em>exactly once</em> for the entire app lifetime.</p>
+            <p class="code-label">What belongs here</p>
+            <ul class="arch-card__list">
+              <li>Auth (login state, token) &amp; <code>authInterceptor</code></li>
+              <li><code>errorInterceptor</code>, <code>ErrorLogger</code></li>
+              <li>SEO service, Analytics wrapper</li>
+            </ul>
+            <p class="code-label" style="margin-top:14px;">Folder structure</p>
+            <pre class="code-block">core/
+&#x251C;&#x2500;&#x2500; auth/
+&#x2502;   &#x251C;&#x2500;&#x2500; auth.ts
+&#x2502;   &#x251C;&#x2500;&#x2500; auth.guard.ts
+&#x2502;   &#x2514;&#x2500;&#x2500; auth.interceptor.ts
+&#x251C;&#x2500;&#x2500; http/
+&#x2502;   &#x251C;&#x2500;&#x2500; error.interceptor.ts
+&#x2502;   &#x2514;&#x2500;&#x2500; loading.interceptor.ts
+&#x251C;&#x2500;&#x2500; seo/
+&#x2502;   &#x2514;&#x2500;&#x2500; seo.ts
+&#x2514;&#x2500;&#x2500; analytics/
+    &#x2514;&#x2500;&#x2500; analytics.ts</pre>
+            <p class="code-label" style="margin-top:14px;">Does NOT belong</p>
+            <ul class="arch-card__list">
+              <li><code>UserCard</code> component &rarr; <code>features/users/</code></li>
+              <li><code>ProductsApi</code> &rarr; <code>features/products/</code></li>
+              <li><code>Button</code> component &rarr; <code>shared/button/</code></li>
+            </ul>
+            <div class="layer-rule glass-card">
+              <span class="layer-rule__label">&#x1F4D0; Golden Rule</span>
+              <p>If you removed a feature entirely, would you still need this? If <strong>yes</strong> &rarr; core. If <strong>no</strong> &rarr; it belongs in that feature.</p>
+            </div>
+          </div>
+
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F6CB;&#xFE0F;</div>
+            <h3 class="arch-card__title">shared/ &mdash; The IKEA Catalogue</h3>
+            <p class="arch-card__desc">Reusable. Dumb. No opinions about business logic.</p>
+            <p class="code-label">Folder structure</p>
+            <pre class="code-block">shared/
+&#x251C;&#x2500;&#x2500; button/
+&#x251C;&#x2500;&#x2500; modal/
+&#x251C;&#x2500;&#x2500; spinner/
+&#x251C;&#x2500;&#x2500; tooltip/
+&#x251C;&#x2500;&#x2500; data-table/
+&#x251C;&#x2500;&#x2500; empty-state/
+&#x251C;&#x2500;&#x2500; avatar/
+&#x2514;&#x2500;&#x2500; pipes/
+    &#x251C;&#x2500;&#x2500; date-format-pipe.ts
+    &#x2514;&#x2500;&#x2500; truncate-pipe.ts</pre>
+            <p class="code-label" style="margin-top:14px;">Does NOT belong</p>
+            <ul class="arch-card__list">
+              <li><code>UserCard</code> &rarr; knows about <code>User</code> type</li>
+              <li><code>OrderSummary</code> &rarr; domain-specific</li>
+              <li><code>Auth service</code> &rarr; singleton, goes in <code>core/</code></li>
+            </ul>
+            <div class="layer-rule glass-card">
+              <span class="layer-rule__label">&#x1F4D0; Golden Rule</span>
+              <p>Can I copy this entire folder into a completely different Angular project and it still works with <strong>zero changes</strong>? If yes &rarr; shared.</p>
+            </div>
+          </div>
+
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F9E9;</div>
+            <h3 class="arch-card__title">features/ &mdash; The Rooms in the House</h3>
+            <p class="arch-card__desc">Self-contained. Lazy-loaded. Owns its own data.</p>
+            <p class="code-label">Folder structure</p>
+            <pre class="code-block">features/
+&#x251C;&#x2500;&#x2500; users/
+&#x2502;   &#x251C;&#x2500;&#x2500; user-list/
+&#x2502;   &#x251C;&#x2500;&#x2500; user-detail/
+&#x2502;   &#x251C;&#x2500;&#x2500; user-card/
+&#x2502;   &#x251C;&#x2500;&#x2500; users-api.ts
+&#x2502;   &#x251C;&#x2500;&#x2500; users.store.ts
+&#x2502;   &#x251C;&#x2500;&#x2500; user.models.ts
+&#x2502;   &#x2514;&#x2500;&#x2500; users.routes.ts
+&#x251C;&#x2500;&#x2500; products/
+&#x2514;&#x2500;&#x2500; orders/</pre>
+            <div class="layer-rule glass-card">
+              <span class="layer-rule__label">&#x1F4D0; Golden Rule</span>
+              <p>Features <strong>never</strong> import from each other. If <code>orders/</code> needs a user&#39;s name, it gets passed in as an <code>input()</code> &mdash; it doesn&#39;t import from <code>users/</code>.</p>
+            </div>
+          </div>
+
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F5BC;&#xFE0F;</div>
+            <h3 class="arch-card__title">layout/ &mdash; The Walls and Ceilings</h3>
+            <p class="arch-card__desc">The chrome. The shell. Always visible when authenticated.</p>
+            <p class="code-label">Folder structure</p>
+            <pre class="code-block">layout/
+&#x251C;&#x2500;&#x2500; main-layout/
+&#x251C;&#x2500;&#x2500; auth-layout/
+&#x251C;&#x2500;&#x2500; header/
+&#x2514;&#x2500;&#x2500; sidebar/</pre>
+            <ul class="arch-card__list" style="margin-top:14px;">
+              <li>Persistent nav, header, sidebar</li>
+              <li>Wraps authenticated routes via <code>&lt;router-outlet&gt;</code></li>
+              <li>Separate layout for auth/login pages</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- CoreModule double-import problem -->
+        <div class="glass-card animate-on-scroll mt-section">
+          <h3 class="subsection-title">&#x26A0;&#xFE0F; The CoreModule Double-Import Problem</h3>
+          <p class="subsection-intro">In the old NgModule world, importing <code>CoreModule</code> in more than one place created <strong>multiple service instances</strong> &mdash; breaking singleton guarantees. The <code>forRoot()</code> pattern was the classic fix.</p>
+          <div class="anti-pair">
+            <div class="anti-bad">
+              <div class="code-label">&#x274C; Old NgModule Problem</div>
+              <pre class="code-block">// If another module imports CoreModule,
+// you get a second instance of every service!
+@NgModule({
+  providers: [AuthService, ErrorLogger]
+})
+export class CoreModule {
+  static forRoot(): ModuleWithProviders&lt;CoreModule&gt; {
+    return {
+      ngModule: CoreModule,
+      providers: [AuthService, ErrorLogger]
+    };
+  }
+}</pre>
+            </div>
+            <div class="anti-good">
+              <div class="code-label">&#x2705; Modern Standalone (v17+)</div>
+              <pre class="code-block">// app.config.ts
+// providedIn: 'root' guarantees exactly
+// one instance automatically - no forRoot() needed!
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(
+      withInterceptors([authInterceptor, errorInterceptor])
+    ),
+    provideClientHydration() // SSR support
+  ]
+};</pre>
+            </div>
+          </div>
+          <p class="subsection-note">&#x2139;&#xFE0F; In modern Angular, any service with <code>providedIn: &#39;root&#39;</code> is automatically a singleton. The framework handles it &mdash; no <code>forRoot()</code>, no <code>CoreModule</code> needed.</p>
+        </div>
+
+        <!-- "Where Does This Go?" cheat sheet -->
+        <div class="animate-on-scroll mt-section">
+          <h3 class="subsection-title">&#x1F4CB; Where Does This Go? Cheat Sheet</h3>
+          <div class="comparison-table-wrap">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>Thing</th>
+                  <th>Where</th>
+                  <th>Why</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Auth (login state, token)</td><td><code>core/auth/</code></td><td>Singleton, app-wide</td></tr>
+                <tr><td>HTTP interceptor (add token)</td><td><code>core/http/</code></td><td>App-wide, one instance</td></tr>
+                <tr><td>Button component</td><td><code>shared/button/</code></td><td>Reusable, no domain knowledge</td></tr>
+                <tr><td>DateFormatPipe</td><td><code>shared/pipes/</code></td><td>Pure utility, no domain</td></tr>
+                <tr><td>UserCard component</td><td><code>features/users/</code></td><td>Knows about User type</td></tr>
+                <tr><td>UsersApi (HTTP calls)</td><td><code>features/users/</code></td><td>Feature-specific data access</td></tr>
+                <tr><td>OrdersStore (NgRx)</td><td><code>features/orders/</code></td><td>Feature state</td></tr>
+                <tr><td>ProductList page</td><td><code>features/products/</code></td><td>Routable feature page</td></tr>
+                <tr><td>Header with nav links</td><td><code>layout/header/</code></td><td>Persistent chrome</td></tr>
+                <tr><td>MainLayout with sidebar</td><td><code>layout/main-layout/</code></td><td>Route parent shell</td></tr>
+                <tr><td>User interface</td><td><code>features/users/user.models.ts</code></td><td>Belongs to users domain</td></tr>
+                <tr><td>Pagination interface</td><td><code>shared/models/</code></td><td>Used by many features</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         Dependency Rules & Communication
+         ===================================================================== -->
+    <section class="section section--alt" id="dep-rules">
+      <div class="container">
+        <div class="section__header animate-on-scroll">
+          <h2 class="section__title">Dependency Rules &amp; Communication</h2>
+          <p class="section__subtitle">One-way imports keep your app maintainable. Cross-feature communication always goes through core, the router, or composition &mdash; never direct imports.</p>
+        </div>
+
+        <!-- Import direction diagram -->
+        <div class="glass-card animate-on-scroll dep-diagram-card" style="margin-bottom:28px;">
+          <h3 class="dep-diagram__title">&#x1F5FA;&#xFE0F; Import Direction Rules</h3>
+          <pre class="dep-diagram"><span class="dep-allowed">&#x2705; ALLOWED</span>
+  features   <span class="dep-arrow">&#x2192;</span>  core
+  features   <span class="dep-arrow">&#x2192;</span>  shared
+  layout     <span class="dep-arrow">&#x2192;</span>  core
+  layout     <span class="dep-arrow">&#x2192;</span>  shared
+
+<span class="dep-forbidden-label">&#x274C; NEVER</span>
+  features   <span class="dep-arrow dep-arrow--bad">&#x21C4;</span>  features  (cross-feature imports)
+  shared     <span class="dep-arrow dep-arrow--bad">&#x2192;</span>  features  (shared must stay pure)
+  core       <span class="dep-arrow dep-arrow--bad">&#x2192;</span>  features  (core must stay pure)</pre>
+        </div>
+
+        <!-- Cross-feature communication patterns -->
+        <h3 class="subsection-heading animate-on-scroll">&#x1F4AC; Cross-Feature Communication Patterns</h3>
+        <div class="arch-grid">
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F9E0;</div>
+            <h3 class="arch-card__title">1. Via Core Service</h3>
+            <p class="arch-card__desc">Put a shared signal or observable in <code>core/</code>. Both features inject it without knowing about each other.</p>
+            <pre class="code-block">// core/auth/auth.ts
+@Injectable({ providedIn: &#39;root&#39; })
+export class AuthService {
+  readonly user = signal&lt;User | null&gt;(null);
+}
+
+// features/orders/orders.ts
+// features/users/users.ts
+// Both inject AuthService from core — never from each other
+private auth = inject(AuthService);</pre>
+          </div>
+
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F9ED;</div>
+            <h3 class="arch-card__title">2. Via Router</h3>
+            <p class="arch-card__desc">Pass data between features using route params, query params, or router state &mdash; the router is the communication bus.</p>
+            <pre class="code-block">// Navigate with context
+this.router.navigate([&#39;/orders&#39;], {
+  queryParams: { userId: this.userId() }
+});
+
+// Receive in orders feature
+private route = inject(ActivatedRoute);
+userId = toSignal(
+  this.route.queryParamMap.pipe(
+    map(p =&gt; p.get(&#39;userId&#39;))
+  )
+);</pre>
+          </div>
+
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F4E5;</div>
+            <h3 class="arch-card__title">3. Via input()/output()</h3>
+            <p class="arch-card__desc">When a layout or page component composes two feature components, it mediates the data via inputs and outputs.</p>
+            <pre class="code-block">// layout/main-layout/main-layout.ts
+// Layout owns the composition — features stay independent
+@Component({
+  template: `
+    &lt;app-user-summary [userId]=&quot;selectedId()&quot; /&gt;
+    &lt;app-order-list
+      [userId]=&quot;selectedId()&quot;
+      (orderSelected)=&quot;onOrder($event)&quot; /&gt;
+  `
+})
+export class MainLayout {
+  selectedId = signal&lt;string | null&gt;(null);
+}</pre>
           </div>
         </div>
       </div>
@@ -442,6 +724,10 @@
           <div class="extra-card glass-card animate-on-scroll">
             <h4>&#x1F9EA; Co-located Tests</h4>
             <p>Spec files live next to the code they test (<code>*.spec.ts</code>). This makes finding and maintaining tests natural &mdash; no separate test directory.</p>
+          </div>
+          <div class="extra-card glass-card animate-on-scroll">
+            <h4>&#x2B07;&#xFE0F; Unidirectional Data Flow</h4>
+            <p>Data flows <strong>down</strong> via <code>input()</code>; events flow <strong>up</strong> via <code>output()</code>. Parent components own state and pass it to children. This predictable flow makes debugging and testing straightforward.</p>
           </div>
         </div>
       </div>
@@ -767,6 +1053,24 @@ export const routes: Routes = [
   `
 })
 export class Hero {}</pre>
+          </div>
+
+          <div class="perf-card glass-card animate-on-scroll">
+            <div class="perf-card__icon">&#x1F310;</div>
+            <h3 class="perf-card__title">SSR &amp; SSG with Angular</h3>
+            <p class="perf-card__desc">Angular&#39;s built-in SSR (<code>@angular/ssr</code>) improves LCP and SEO. Add <code>provideClientHydration()</code> for seamless server-to-client handoff without full page re-render.</p>
+            <pre class="code-block">// app.config.ts
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    provideClientHydration(
+      withEventReplay() // preserves user events during hydration
+    )
+  ]
+};
+
+// angular.json — add SSR during ng new or:
+// ng add @angular/ssr</pre>
           </div>
         </div>
       </div>
