@@ -25,6 +25,7 @@
       <ul class="nav__links" id="navLinks">
         <li><a href="#folder-tree" class="nav__link">Folder Tree</a></li>
         <li><a href="#architecture" class="nav__link">Architecture</a></li>
+        <li><a href="#folder-grouping" class="nav__link">Grouping</a></li>
         <li><a href="#naming" class="nav__link">Naming</a></li>
         <li><a href="#principles" class="nav__link">Principles</a></li>
         <li><a href="#state" class="nav__link">State</a></li>
@@ -67,7 +68,7 @@
         </div>
         <div class="hero__stats">
           <div class="hero__stat"><span class="hero__stat-num">4</span><span class="hero__stat-label">Project Sizes</span></div>
-          <div class="hero__stat"><span class="hero__stat-num">10</span><span class="hero__stat-label">Sections</span></div>
+          <div class="hero__stat"><span class="hero__stat-num">11</span><span class="hero__stat-label">Sections</span></div>
           <div class="hero__stat"><span class="hero__stat-num">17+</span><span class="hero__stat-label">Angular Version</span></div>
           <div class="hero__stat"><span class="hero__stat-num">&#x2F;</span><span class="hero__stat-label">Search Shortcut</span></div>
         </div>
@@ -170,22 +171,22 @@
           <div class="arch-card glass-card animate-on-scroll">
             <div class="arch-card__icon">&#x1F517;</div>
             <h3 class="arch-card__title">shared/</h3>
-            <p class="arch-card__desc">Reusable <span data-tooltip="Standalone components declare their own imports — no SharedModule needed">standalone components</span>, directives, and pipes used across multiple features. Import directly into feature components.</p>
+            <p class="arch-card__desc">Reusable <span data-tooltip="Standalone components declare their own imports — no SharedModule needed">standalone components</span>, directives, and pipes used across multiple features. Each shared component gets its own named folder; simple directives and pipes are flat <code>.ts</code> files directly under <code>shared/</code> — no <code>components/</code>, <code>directives/</code>, or <code>pipes/</code> sub-folders.</p>
             <ul class="arch-card__list">
-              <li>Reusable UI components (standalone)</li>
-              <li>Custom attribute directives</li>
-              <li>Custom pipes</li>
+              <li>Shared components: <code>shared/button/</code>, <code>shared/modal/</code></li>
+              <li>Flat directives: <code>shared/highlight.ts</code></li>
+              <li>Flat pipes: <code>shared/truncate-pipe.ts</code></li>
               <li>Reactive form validators</li>
             </ul>
           </div>
           <div class="arch-card glass-card animate-on-scroll">
             <div class="arch-card__icon">&#x1F9E9;</div>
             <h3 class="arch-card__title">features/</h3>
-            <p class="arch-card__desc"><span data-tooltip="loadComponent() and loadChildren() in routes.ts enable lazy loading without NgModules">Lazy-loaded feature areas</span>, each a distinct business domain. Each feature owns its pages, components, services, models, and routes &mdash; fully self-contained.</p>
+            <p class="arch-card__desc"><span data-tooltip="loadComponent() and loadChildren() in routes.ts enable lazy loading without NgModules">Lazy-loaded feature areas</span>, each a distinct business domain. All files for a feature live together flat — components, services, models, and routes are siblings in the same folder, not split by type into sub-directories.</p>
             <ul class="arch-card__list">
-              <li>Auth (login, register, forgot-password)</li>
-              <li>Dashboard (stats, charts, activity)</li>
-              <li>Users (list, detail, edit)</li>
+              <li>All dashboard files in <code>features/dashboard/</code></li>
+              <li>All auth files in <code>features/auth/</code></li>
+              <li>No <code>pages/</code>, <code>services/</code>, or <code>models/</code> sub-folders</li>
               <li>Each feature exposes only its routes file</li>
             </ul>
           </div>
@@ -198,6 +199,106 @@
               <li>Collapsible sidebar navigation</li>
               <li>Footer with links</li>
               <li>Main layout composition component</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="folder-grouping">
+      <div class="container">
+        <div class="section__header animate-on-scroll">
+          <h2 class="section__title">Folder Grouping Strategy</h2>
+          <p class="section__subtitle">The Angular 2025 style guide is explicit: <strong>avoid subdirectories based on code type</strong>.</p>
+        </div>
+
+        <div class="glass-card animate-on-scroll" style="margin-bottom:28px;padding:20px 24px;border-left:4px solid var(--accent);background:var(--accent-bg);">
+          <strong style="color:var(--accent);">&#x1F4CC; Angular 2025 Style Guide Rule</strong>
+          <p style="margin:8px 0 0;font-size:0.9rem;color:var(--text-secondary);">"<em>Avoid creating subdirectories based on the type of code that lives in those directories. For example, avoid creating directories like <code>components</code>, <code>directives</code>, and <code>services</code>.</em>"</p>
+          <p style="margin:10px 0 0;font-size:0.87rem;color:var(--text-secondary);">Feature-based grouping keeps all related files together, making each feature self-contained. This scales better, reduces cross-directory navigation, and naturally supports lazy loading and micro-frontends.</p>
+        </div>
+
+        <div class="anti-pair animate-on-scroll" style="margin-bottom:32px;">
+          <div class="anti-bad">
+            <div class="anti-bad__label">&#x274C; Don&rsquo;t — Type-based grouping</div>
+            <pre>src/app/
+&#x251C;&#x2500;&#x2500; shared/
+&#x2502;   &#x251C;&#x2500;&#x2500; components/    &#x2190; ALL shared components
+&#x2502;   &#x2502;   &#x251C;&#x2500;&#x2500; button/
+&#x2502;   &#x2502;   &#x2514;&#x2500;&#x2500; modal/
+&#x2502;   &#x251C;&#x2500;&#x2500; directives/    &#x2190; ALL directives
+&#x2502;   &#x251C;&#x2500;&#x2500; pipes/         &#x2190; ALL pipes
+&#x2502;   &#x2514;&#x2500;&#x2500; services/      &#x2190; ALL shared services
+&#x2514;&#x2500;&#x2500; features/
+    &#x2514;&#x2500;&#x2500; dashboard/
+        &#x251C;&#x2500;&#x2500; components/    &#x2190; type-based inside feature
+        &#x2502;   &#x2514;&#x2500;&#x2500; dashboard-home/
+        &#x251C;&#x2500;&#x2500; services/      &#x2190; type-based inside feature
+        &#x2514;&#x2500;&#x2500; models/        &#x2190; type-based inside feature</pre>
+          </div>
+          <div class="anti-good">
+            <div class="anti-good__label">&#x2705; Do — Feature/domain-based grouping</div>
+            <pre>src/app/
+&#x251C;&#x2500;&#x2500; shared/
+&#x2502;   &#x251C;&#x2500;&#x2500; button/        &#x2190; each item owns its folder
+&#x2502;   &#x2502;   &#x251C;&#x2500;&#x2500; button.ts
+&#x2502;   &#x2502;   &#x2514;&#x2500;&#x2500; button.html
+&#x2502;   &#x251C;&#x2500;&#x2500; modal/
+&#x2502;   &#x251C;&#x2500;&#x2500; highlight.ts   &#x2190; simple directive, flat
+&#x2502;   &#x2514;&#x2500;&#x2500; truncate-pipe.ts &#x2190; simple pipe, flat
+&#x2514;&#x2500;&#x2500; features/
+    &#x2514;&#x2500;&#x2500; dashboard/     &#x2190; everything for dashboard together
+        &#x251C;&#x2500;&#x2500; dashboard-home.ts
+        &#x251C;&#x2500;&#x2500; dashboard-home.html
+        &#x251C;&#x2500;&#x2500; stats-card.ts  &#x2190; child component, flat
+        &#x251C;&#x2500;&#x2500; dashboard.ts   &#x2190; service, alongside components
+        &#x2514;&#x2500;&#x2500; dashboard.routes.ts</pre>
+          </div>
+        </div>
+
+        <div class="arch-grid" style="margin-bottom:0;">
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F4C2;</div>
+            <h3 class="arch-card__title">shared/ approach</h3>
+            <p class="arch-card__desc">Reusable items go directly under <code>shared/</code>. Multi-file components (ts + html + scss + spec) get their own named folder. Simple directives and pipes are flat <code>.ts</code> files — no <code>components/</code> or <code>pipes/</code> sub-directory.</p>
+            <ul class="arch-card__list">
+              <li><code>shared/button/button.ts</code> — component folder</li>
+              <li><code>shared/modal/modal.ts</code> — component folder</li>
+              <li><code>shared/highlight.ts</code> — flat directive</li>
+              <li><code>shared/truncate-pipe.ts</code> — flat pipe</li>
+            </ul>
+          </div>
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F9E9;</div>
+            <h3 class="arch-card__title">features/ approach</h3>
+            <p class="arch-card__desc">All files for a feature live together in its folder — components, services, models, and routes are siblings, not grouped by type. The folder name (the feature name) provides context, not a <code>services/</code> or <code>pages/</code> wrapper.</p>
+            <ul class="arch-card__list">
+              <li><code>dashboard/dashboard-home.ts</code></li>
+              <li><code>dashboard/stats-card.ts</code></li>
+              <li><code>dashboard/dashboard.ts</code> (service)</li>
+              <li><code>dashboard/dashboard.routes.ts</code></li>
+            </ul>
+          </div>
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x26A0;&#xFE0F;</div>
+            <h3 class="arch-card__title">core/ exception</h3>
+            <p class="arch-card__desc"><code>core/</code> is the one place where type-based sub-grouping (<code>guards/</code>, <code>interceptors/</code>, <code>services/</code>) remains practical. These are app-wide singletons that don&rsquo;t belong to any feature, so grouping by type is acceptable here.</p>
+            <ul class="arch-card__list">
+              <li><code>core/guards/auth.ts</code> — functional guard</li>
+              <li><code>core/interceptors/auth.ts</code> — HTTP interceptor</li>
+              <li><code>core/services/logger.ts</code> — singleton service</li>
+              <li>Still a valid pattern for cross-cutting concerns</li>
+            </ul>
+          </div>
+          <div class="arch-card glass-card animate-on-scroll">
+            <div class="arch-card__icon">&#x1F4A1;</div>
+            <h3 class="arch-card__title">Why feature-based?</h3>
+            <p class="arch-card__desc">When you need to change a feature, all its files are in one place. You can delete, move, or lazy-load an entire feature by touching one folder. Type-based grouping scatters a feature across the whole codebase.</p>
+            <ul class="arch-card__list">
+              <li>&#x2705; Self-contained features — easy to delete or move</li>
+              <li>&#x2705; Supports lazy loading by folder boundary</li>
+              <li>&#x2705; Scales to micro-frontends naturally</li>
+              <li>&#x2705; Less cross-directory navigation</li>
             </ul>
           </div>
         </div>
@@ -219,14 +320,14 @@
 
         <div class="naming-grid">
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext">components/hero.ts</span>
+            <span class="naming-card__ext">hero/hero.ts</span>
             <h4 class="naming-card__title">Components</h4>
-            <p class="naming-card__desc">UI building blocks live in a <code>components/</code> folder. <code>hero.ts</code> &rarr; class <code>Hero</code> (or <code>HeroComponent</code>) &rarr; selector <code>app-hero</code>. <code>standalone: true</code> is the default since Angular 19.</p>
+            <p class="naming-card__desc">Components live in their feature folder or in their own named folder under <code>shared/</code>. <code>hero.ts</code> &rarr; class <code>Hero</code> (or <code>HeroComponent</code>) &rarr; selector <code>app-hero</code>. The folder name (not a <code>components/</code> wrapper) provides context. <code>standalone: true</code> is the default since Angular 19.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-service">services/auth.ts</span>
+            <span class="naming-card__ext ext-service">dashboard/auth-api.ts</span>
             <h4 class="naming-card__title">Services</h4>
-            <p class="naming-card__desc">Business logic &amp; data access in a <code>services/</code> folder. <code>auth.ts</code> &rarr; class <code>Auth</code> (or <code>AuthService</code>). Use <code>inject()</code> over constructor injection.</p>
+            <p class="naming-card__desc">Feature services live alongside their feature files — not in a separate <code>services/</code> folder. App-wide singleton services live in <code>core/services/</code>. <code>auth-api.ts</code> &rarr; class <code>AuthApi</code> (or <code>AuthApiService</code>). Use <code>inject()</code> over constructor injection.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-guard">guards/auth.ts</span>
@@ -239,19 +340,19 @@
             <p class="naming-card__desc">HTTP middleware in an <code>interceptors/</code> folder. <code>auth.ts</code> &rarr; function <code>authInterceptor</code>. Uses <code>HttpInterceptorFn</code> type.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-pipe">pipes/truncate-pipe.ts</span>
+            <span class="naming-card__ext ext-pipe">shared/truncate-pipe.ts</span>
             <h4 class="naming-card__title">Pipes</h4>
-            <p class="naming-card__desc">Template transforms in a <code>pipes/</code> folder. Use a hyphenated suffix: <code>truncate-pipe.ts</code> &rarr; class <code>TruncatePipe</code>. No dot suffix needed.</p>
+            <p class="naming-card__desc">Simple pipes live as flat files directly under <code>shared/</code> — no <code>pipes/</code> sub-folder needed. Use a hyphenated suffix: <code>truncate-pipe.ts</code> &rarr; class <code>TruncatePipe</code>. No dot suffix needed.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-directive">directives/highlight.ts</span>
+            <span class="naming-card__ext ext-directive">shared/highlight.ts</span>
             <h4 class="naming-card__title">Directives</h4>
-            <p class="naming-card__desc">DOM behavior in a <code>directives/</code> folder. <code>highlight.ts</code> &rarr; class <code>Highlight</code> (or <code>HighlightDirective</code>).</p>
+            <p class="naming-card__desc">Simple directives live as flat files directly under <code>shared/</code> — no <code>directives/</code> sub-folder. <code>highlight.ts</code> &rarr; class <code>Highlight</code> (or <code>HighlightDirective</code>). Feature-specific directives live alongside the feature file that uses them.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
-            <span class="naming-card__ext ext-model">models/user.ts</span>
+            <span class="naming-card__ext ext-model">feature/user-feature.ts</span>
             <h4 class="naming-card__title">Models</h4>
-            <p class="naming-card__desc">TypeScript interfaces/types in a <code>models/</code> folder. <code>user.ts</code> &rarr; interface <code>User</code>. Prefer interfaces over classes for data shapes.</p>
+            <p class="naming-card__desc">Feature-specific TypeScript interfaces live alongside the feature files — not in a separate <code>models/</code> sub-folder. Global models shared app-wide live in <code>core/models/</code>. <code>user.ts</code> &rarr; interface <code>User</code>. Prefer interfaces over classes for data shapes.</p>
           </div>
           <div class="naming-card glass-card animate-on-scroll">
             <span class="naming-card__ext ext-spec">hero.spec.ts</span>
@@ -894,11 +995,51 @@ export class Item {
             </div>
           </div>
 
+          <div class="anti-card glass-card animate-on-scroll">
+            <div class="anti-card__header">
+              <h4 class="anti-card__title">9. Type-Based Folder Organization</h4>
+            </div>
+            <div class="anti-pair">
+              <div class="anti-bad">
+                <div class="anti-bad__label">&#x274C; Don&#39;t — group by code type</div>
+                <pre>// Scatters one feature
+// across the whole codebase
+features/dashboard/
+  components/
+    dashboard-home/
+    stats-card/
+  services/
+    dashboard.ts
+  models/
+    dashboard.ts
+
+shared/
+  components/   &#x2190; type folder
+  directives/   &#x2190; type folder
+  pipes/        &#x2190; type folder</pre>
+              </div>
+              <div class="anti-good">
+                <div class="anti-good__label">&#x2705; Do — group by feature/domain</div>
+                <pre>// All dashboard files together
+// Delete a feature = delete one folder
+features/dashboard/
+  dashboard-home.ts
+  dashboard-home.html
+  stats-card.ts
+  dashboard.ts  &#x2190; service
+  dashboard.routes.ts
+
+shared/       &#x2190; items own their space
+  button/     &#x2190; component folder
+  highlight.ts &#x2190; flat directive
+  truncate-pipe.ts &#x2190; flat pipe</pre>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
-
-    <section class="section" id="migration">
       <div class="container">
         <div class="section__header animate-on-scroll">
           <h2 class="section__title">Migration Guide</h2>
@@ -1160,6 +1301,55 @@ export class UserList
             </div>
           </div>
 
+          <div class="migration-step glass-card animate-on-scroll">
+            <div class="migration-step__header">
+              <div class="migration-step__num">6</div>
+              <div class="migration-step__title">Type-Based Folders &#x2192; Feature-Based Grouping</div>
+            </div>
+            <p style="font-size:0.87rem;color:var(--text-secondary);margin-bottom:14px;">Angular 2025 style guide: <em>"Avoid creating subdirectories based on the type of code that lives in those directories."</em> Move <code>components/</code>, <code>services/</code>, <code>models/</code>, and <code>pages/</code> sub-folders into flat, feature-level siblings. Do this progressively as you touch each feature.</p>
+            <div class="migration-before-after">
+              <div class="migration-before">
+                <div class="migration-before__label">BEFORE (type-based sub-folders)</div>
+                <pre>features/
+&#x2514;&#x2500;&#x2500; dashboard/
+    &#x251C;&#x2500;&#x2500; pages/         &#x2190; type-based
+    &#x2502;   &#x2514;&#x2500;&#x2500; dashboard-home/
+    &#x251C;&#x2500;&#x2500; components/    &#x2190; type-based
+    &#x2502;   &#x2514;&#x2500;&#x2500; stats-card/
+    &#x251C;&#x2500;&#x2500; services/      &#x2190; type-based
+    &#x2502;   &#x2514;&#x2500;&#x2500; dashboard.ts
+    &#x2514;&#x2500;&#x2500; models/        &#x2190; type-based
+        &#x2514;&#x2500;&#x2500; dashboard.ts
+
+shared/
+&#x251C;&#x2500;&#x2500; components/    &#x2190; type-based
+&#x2502;   &#x2514;&#x2500;&#x2500; button/
+&#x251C;&#x2500;&#x2500; directives/    &#x2190; type-based
+&#x2502;   &#x2514;&#x2500;&#x2500; highlight.ts
+&#x2514;&#x2500;&#x2500; pipes/         &#x2190; type-based
+    &#x2514;&#x2500;&#x2500; truncate-pipe.ts</pre>
+              </div>
+              <div class="migration-after">
+                <div class="migration-after__label">AFTER (feature-based, flat)</div>
+                <pre>features/
+&#x2514;&#x2500;&#x2500; dashboard/     &#x2190; all files together
+    &#x251C;&#x2500;&#x2500; dashboard-home.ts
+    &#x251C;&#x2500;&#x2500; dashboard-home.html
+    &#x251C;&#x2500;&#x2500; dashboard-home.spec.ts
+    &#x251C;&#x2500;&#x2500; stats-card.ts
+    &#x251C;&#x2500;&#x2500; stats-card.html
+    &#x251C;&#x2500;&#x2500; dashboard.ts  &#x2190; service
+    &#x2514;&#x2500;&#x2500; dashboard.routes.ts
+
+shared/         &#x2190; flat, no type sub-dirs
+&#x251C;&#x2500;&#x2500; button/        &#x2190; component folder
+&#x2502;   &#x2514;&#x2500;&#x2500; button.ts
+&#x251C;&#x2500;&#x2500; highlight.ts   &#x2190; flat directive
+&#x2514;&#x2500;&#x2500; truncate-pipe.ts &#x2190; flat pipe</pre>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -1173,15 +1363,15 @@ export class UserList
         <div class="cheat-grid">
           <div class="cheat-card glass-card animate-on-scroll">
             <h4 class="cheat-card__title">&#x1F680; Generate Components</h4>
-            <pre class="cheat-card__code"><code>ng g c features/auth/pages/login
-ng g c shared/components/button
+            <pre class="cheat-card__code"><code>ng g c features/auth/login
+ng g c shared/button
 ng g c layout/header
-ng g c core/layout/sidebar</code></pre>
+ng g c features/dashboard/stats-card</code></pre>
           </div>
           <div class="cheat-card glass-card animate-on-scroll">
             <h4 class="cheat-card__title">&#x2699;&#xFE0F; Generate Services</h4>
             <pre class="cheat-card__code"><code>ng g s core/services/auth
-ng g s features/users/services/users-api
+ng g s features/users/users-api
 ng g s core/services/notification</code></pre>
           </div>
           <div class="cheat-card glass-card animate-on-scroll">
@@ -1203,9 +1393,9 @@ ng g interceptor core/interceptors/error
           </div>
           <div class="cheat-card glass-card animate-on-scroll">
             <h4 class="cheat-card__title">&#x1F527; Generate Pipes &amp; Directives</h4>
-            <pre class="cheat-card__code"><code>ng g pipe shared/pipes/truncate
-ng g pipe shared/pipes/time-ago
-ng g directive shared/directives/highlight</code></pre>
+            <pre class="cheat-card__code"><code>ng g pipe shared/truncate-pipe
+ng g pipe shared/time-ago-pipe
+ng g directive shared/highlight</code></pre>
           </div>
           <div class="cheat-card glass-card animate-on-scroll">
             <h4 class="cheat-card__title">&#x1F6E0;&#xFE0F; Build &amp; Serve</h4>
