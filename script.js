@@ -1017,6 +1017,46 @@
   }
 
   // ========================================================================
+  // Copy buttons for all .code-block elements
+  // ========================================================================
+  function initCodeBlockCopyButtons() {
+    document.querySelectorAll('.code-block').forEach(function (block) {
+      var wrapper = block.parentElement;
+      if (!wrapper) return;
+      wrapper.style.position = 'relative';
+      var btn = document.createElement('button');
+      btn.className = 'copy-btn code-copy-btn';
+      btn.setAttribute('aria-label', 'Copy code');
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+      wrapper.appendChild(btn);
+      btn.style.position = 'absolute';
+      btn.style.top = '8px';
+      btn.style.right = '8px';
+      btn.style.zIndex = '3';
+      btn.style.opacity = '0';
+      btn.style.transition = 'opacity 0.2s ease';
+
+      wrapper.addEventListener('mouseenter', function () { btn.style.opacity = '1'; });
+      wrapper.addEventListener('mouseleave', function () { btn.style.opacity = '0'; });
+
+      btn.addEventListener('click', function () {
+        var text = block.textContent.trim();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            btn.innerHTML = '✓';
+            btn.style.color = 'var(--success)';
+            setTimeout(function () {
+              btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+              btn.style.color = '';
+            }, 1500);
+            showToast('📋 Copied!');
+          });
+        }
+      });
+    });
+  }
+
+  // ========================================================================
   // Tooltips
   // ========================================================================
   function initTooltips() {
@@ -1192,6 +1232,17 @@
           navLinks.classList.remove('open');
         }
       }
+
+      if ((e.key === 'j' || e.key === 'k') && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        var sections = Array.from(document.querySelectorAll('section[id]'));
+        var currentIdx = -1;
+        var scrollY = window.scrollY + 120;
+        sections.forEach(function (sec, i) {
+          if (scrollY >= sec.offsetTop) currentIdx = i;
+        });
+        var nextIdx = e.key === 'j' ? Math.min(currentIdx + 1, sections.length - 1) : Math.max(currentIdx - 1, 0);
+        sections[nextIdx].scrollIntoView({ behavior: 'smooth' });
+      }
     });
   }
 
@@ -1333,6 +1384,7 @@
 
     initProjectSizeToggle();
     initCopyCliButtons();
+    initCodeBlockCopyButtons();
   });
 
 })();
