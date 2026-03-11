@@ -125,7 +125,7 @@ ul { list-style: none; }
 .glass-card:hover {
   border-color: var(--border-color-hover);
   box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.06);
-  transform: translateY(-4px);
+  transform: translateY(-2px);
 }
 
 /* ==========================================================================
@@ -242,16 +242,25 @@ ul { list-style: none; }
 .nav__link {
   padding: 6px 10px;
   border-radius: var(--radius-sm);
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: 0.72rem;
+  font-weight: 600;
   color: var(--text-secondary);
   transition: color var(--transition), background var(--transition);
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.nav__link:hover, .nav__link.active {
+.nav__link:hover {
   color: var(--text-primary);
   background: var(--accent-bg);
+}
+
+.nav__link.active {
+  color: var(--accent);
+  background: transparent;
+  border-bottom: 2px solid var(--accent);
+  border-radius: 0;
 }
 
 .nav__actions { display: flex; align-items: center; gap: 8px; }
@@ -307,7 +316,7 @@ ul { list-style: none; }
 
 .hamburger { display: none; }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .nav__links {
     position: fixed;
     top: var(--header-height);
@@ -459,7 +468,7 @@ ul { list-style: none; }
 /* ==========================================================================
    Sections
    ========================================================================== */
-.section { padding: 80px 0; }
+.section { padding: 64px 0; }
 .section--alt { background: var(--bg-secondary); }
 
 .section__header { text-align: center; margin-bottom: 48px; }
@@ -718,7 +727,7 @@ ul { list-style: none; }
 /* ==========================================================================
    Architecture Cards
    ========================================================================== */
-.arch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.arch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 20px; }
 
 .arch-card { padding: 28px; }
 .arch-card__icon { font-size: 2rem; margin-bottom: 12px; }
@@ -947,26 +956,93 @@ ul { list-style: none; }
 .code-block {
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 20px;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: 16px 20px;
   font-family: var(--font-mono);
-  font-size: 0.82rem;
-  line-height: 1.8;
+  font-size: 0.78rem;
+  line-height: 1.75;
   overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
   color: var(--text-primary);
   position: relative;
   tab-size: 2;
-  margin: 12px 0;
+  margin: 0 0 12px;
 }
 
 .code-label {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
-  margin-bottom: 6px;
+  margin-bottom: 0;
+  padding: 6px 14px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
   font-family: var(--font-body);
+  display: inline-block;
+}
+
+/* ==========================================================================
+   Callout Boxes
+   ========================================================================== */
+.callout {
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  margin: 16px 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.callout--tip {
+  background: rgba(63, 185, 80, 0.08);
+  border-left: 4px solid var(--success);
+  color: var(--text-secondary);
+}
+
+.callout--warning {
+  background: rgba(210, 153, 34, 0.08);
+  border-left: 4px solid var(--warning);
+  color: var(--text-secondary);
+}
+
+.callout--info {
+  background: var(--accent-bg);
+  border-left: 4px solid var(--accent);
+  color: var(--text-secondary);
+}
+
+.callout--new {
+  background: rgba(163, 113, 247, 0.08);
+  border-left: 4px solid var(--gradient-end);
+  color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   Code Block Overflow Fixes
+   ========================================================================== */
+.arch-card .code-block,
+.state-card .code-block {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: hidden;
+}
+
+.anti-bad pre, .anti-good pre {
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: hidden;
+}
+
+.migration-before pre, .migration-after pre {
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: hidden;
 }
 
 /* ==========================================================================
@@ -1205,6 +1281,10 @@ ul { list-style: none; }
 /* ==========================================================================
    Responsive Tweaks
    ========================================================================== */
+@media (max-width: 1100px) {
+  .tree-layout { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 600px) {
   .hero { padding: calc(var(--header-height) + 40px) 0 40px; min-height: auto; }
   .hero__stats { gap: 24px; }
@@ -1213,6 +1293,37 @@ ul { list-style: none; }
   .detail-panel { position: static; }
   .back-to-top { bottom: 1rem; right: 1rem; }
   .anti-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 400px) {
+  .container { padding: 0 16px; }
+  .hero__title { font-size: 2rem; }
+  .hero__stats { gap: 16px; }
+  .hero__stat-num { font-size: 1.5rem; }
+  .size-toggle-group { flex-direction: column; }
+  .size-btn { width: 100%; text-align: center; }
+}
+
+/* Better table scrolling indicator */
+.comparison-table-wrap {
+  position: relative;
+}
+
+.comparison-table-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  background: linear-gradient(to right, transparent, var(--bg-primary));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.comparison-table-wrap.scrollable::after {
+  opacity: 1;
 }
 
 /* ==========================================================================
